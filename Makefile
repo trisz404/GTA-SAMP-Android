@@ -6,7 +6,7 @@ STRIP = $(TOOLCHAIN_PREFIX)strip
 DUMMYDIR = dummy_libs
 DUMMYS = libGTASA.so libImmEmulatorJ.so libSCAnd.so
 
-CFLAGS = -shared -g -Wall -O2 -pipe -fexceptions -D_THREAD_SAFE -DNDEBUG -std=c++11 -ffunction-sections -fdata-sections -Wl,--gc-sections
+CFLAGS = -shared -g -Wall -Ofast -pipe -fexceptions -D_THREAD_SAFE -DNDEBUG -std=c++11 -ffunction-sections -fdata-sections -Wl,--gc-sections
 CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 
 INCDIRS = rw_include sa_include
@@ -43,7 +43,7 @@ $(OBJDIR)/%.o:
 $(TARGET):
 	@echo linking $@
 	@$(CXX) $(CFLAGS) $(LIBDIRS:%=-L%) $(OBJDIR)/$(SRCFILES:%.cpp=%.o) $(LIBS:%=-l%) -o $(TARGET)
-	@$(STRIP) -s -R .comment -R .gnu.version --strip-unneeded $(TARGET)
+	@$(STRIP) --remove-section=.comment --remove-section=.note --remove-section=.gnu.version --strip-all $(TARGET)
 	
 clean:
 	@if exist $(OBJDIR) rmdir /s /q $(OBJDIR)
