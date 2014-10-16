@@ -31,7 +31,9 @@ int log(const char *format, ...)
 
 void *wantedthread(void* punused)
 {
-    while(gGameState != 9) { sleep(1); }
+    while(gGameState != 9)
+		sleep(1); 
+	
     log("Game loaded!");
 
     ToggleDebugFPS();
