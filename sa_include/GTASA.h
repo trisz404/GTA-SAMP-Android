@@ -8,7 +8,9 @@
 #include "CPhysical.h"
 #include "CPlaceable.h"
 #include "CPlayerPed.h"
+#include "CVector.h"
 #include "CWanted.h"
+
 
 extern int gGameState;
 CPlayerPed* FindPlayerPed(int id);
