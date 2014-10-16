@@ -7,6 +7,8 @@
 
 #include <GTASA.h>
 
+#include "hooks.h"
+
 int log(const char *format, ...)
 {
    va_list arg;
@@ -47,6 +49,9 @@ void inithack()
     log("Starting thread...");
     pthread_t thread;
     pthread_create(&thread, NULL, wantedthread, 0);
+
+	InitHooks();
+	
 }
 
 extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved);

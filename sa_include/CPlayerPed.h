@@ -13,6 +13,7 @@ public:
 	virtual ~CPlayerPed();
 	
 	void SetWantedLevel(int a2);
+
 };
 
 #endif

@@ -8,6 +8,7 @@ DUMMYS = libGTASA.so libImmEmulatorJ.so libSCAnd.so
 
 CFLAGS = -shared -g -Wall -Ofast -pipe -fexceptions -D_THREAD_SAFE -DNDEBUG -std=c++11 -ffunction-sections -fdata-sections -Wl,--gc-sections
 CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
+CFLAGS += -w
 
 INCDIRS = rw_include sa_include
 
@@ -15,7 +16,7 @@ LIBDIRS = $(DUMMYDIR)
 LIBS = log GTASA
 
 SRCDIR = src
-SRCFILES = main.cpp
+SRCFILES = main.cpp utils.cpp hooks.cpp
 
 OBJDIR = obj
 
@@ -42,7 +43,7 @@ $(OBJDIR)/%.o:
 
 $(TARGET):
 	@echo linking $@
-	@$(CXX) $(CFLAGS) $(LIBDIRS:%=-L%) $(OBJDIR)/$(SRCFILES:%.cpp=%.o) $(LIBS:%=-l%) -o $(TARGET)
+	@$(CXX) $(CFLAGS) $(LIBDIRS:%=-L%) $(SRCFILES:%.cpp=$(OBJDIR)/%.o) $(LIBS:%=-l%) -o $(TARGET)
 	@$(STRIP) --remove-section=.comment --remove-section=.note --remove-section=.gnu.version --strip-all $(TARGET)
 	
 clean:
