@@ -8,7 +8,7 @@
 int log(const char *format, ...);
 unsigned int GetBaseAddress();
 int memcpy_protect(unsigned char* form, unsigned char* to, int len);
-unsigned long ARMJMP(unsigned long from, unsigned long to);
+void ARMJMP(unsigned char* from, unsigned char* to);
 
 
 class CRunningScript
@@ -40,13 +40,9 @@ public:
 	static CPlayerPed* Players[202];
 };
 
-
-void CRunningScript__Process()
+int CRunningScript__Process(void* p)
 {
 	static bool l_bProcessed =	false;
-	log("CRunningScript__Process() -> Called");
-	
-	
 	
 	if(l_bProcessed == false)
 	{
@@ -74,39 +70,36 @@ void CRunningScript__Process()
 	
 		l_bProcessed = true;
 	}
+	return 0;
 }
 
 void Test();
-void callpatch(int from, int to);
+void jmppatch(unsigned char* from, unsigned char* to);
+
+class CLoadingScreen
+{
+public:
+	static void NewChunkLoaded();
+};
+
+void LoadingScreen(char const*, char const*, char const*);
+void LoadingScreen_hook(char const* a1, char const* a2, char const* a3)
+{
+	log("LoadingScreen_hook(%s, %s, %s)", a1, a2, a3);
+	
+	CLoadingScreen::NewChunkLoaded();
+}
 
 void InitHooks()
 {
-	unsigned int l_uiBaseAddr;
+	unsigned int l_uiBaseAddr = GetBaseAddress();
 	
-	l_uiBaseAddr = GetBaseAddress();
-
-	// Disable script loading (main.scm)
-	/*unsigned int ajmp = ARMJMP(l_uiBaseAddr + 0x002B9256, l_uiBaseAddr + 0x002B9368);	
-	memcpy_protect((unsigned char*)(l_uiBaseAddr + 0x002B9256), (unsigned char*)&ajmp, 4);*/
-	
-	// Hook CRunningScript::Process()
-	
-
-	/*unsigned int ajmp = ARMJMP((unsigned long)(void*)(&CRunningScript::Process), (unsigned int)CRunningScript__Process);	
-	if(memcpy_protect((unsigned char*)(void*)(&CRunningScript::Process), (unsigned char*)&ajmp, 4) == 0)
-	{
-		log("InitHooks() -> CRunningScript::Process - Hooked !");
-	}*/
-	
-	/*
-	unsigned int ajmp = ARMJMP((unsigned int)(l_uiBaseAddr + 0x02B7A54), (unsigned int)CRunningScript__Process);	
-	if(memcpy_protect((unsigned char*)(void*)(l_uiBaseAddr + 0x02B7A54), (unsigned char*)&ajmp, 4) == 0)
-	{
-		log("InitHooks() -> CRunningScript::Process - Hooked !");
-	}
-	*/
 	Test();
-	callpatch((int)(l_uiBaseAddr + 0x02B7A54), (int)CRunningScript__Process);
 	
-
+	// Disable script loading (main.scm)
+	ARMJMP((unsigned char *)(l_uiBaseAddr + 0x002B9256), (unsigned char *)(l_uiBaseAddr + 0x002B9368));
+	
+	jmppatch((unsigned char *)(l_uiBaseAddr + 0x02B7A54), (unsigned char *)CRunningScript__Process);
+	
+	jmppatch((unsigned char *)(LoadingScreen), (unsigned char *)(LoadingScreen_hook));
 }
