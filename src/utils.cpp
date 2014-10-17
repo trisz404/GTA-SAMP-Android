@@ -61,54 +61,18 @@ int memcpy_protect(unsigned char* to, unsigned char* from, int len)
 
 	return result;
 }
-unsigned char hookdata[] =
-{	
-	0x01, 0xB4, 0x01, 0xB4, 
-	0x01, 0x48, 0x01, 0x90, 
-	0x01, 0xBD, 0x00, 0xBF, 
-	0x00, 0x00, 0x00, 0x00
-};
 
-unsigned char* g_hookpos;
-unsigned char* g_hookmax;
-
-int log(const char *format, ...);
-
-void copyhookcrap(unsigned char* to, unsigned char* form)
+void ARMBIGJMP(unsigned char* to, unsigned char* form)
 {
-	unsigned char dest[16];
-
-	memcpy(dest, hookdata, 16u);
-	*(unsigned long *)&dest[12] = (unsigned long)(form)/* | 1*/;
-	memcpy_protect((unsigned char*)((unsigned long)(to) & 0xFFFFFFFE), dest, 16);
-}
-
-void jmppatch(unsigned char* from, unsigned char* to)
-{
-  if (g_hookmax < g_hookpos + 16)
-  {
-    log("SPACE LIMIT REACHED");
-	// exit(1);
-  }
-  
-  ARMJMP(from, g_hookpos);
-  copyhookcrap(g_hookpos, to);
-  g_hookpos += 16;
-}
-
-void setuphook(unsigned char* a1, int a2)
-{
-  g_hookpos = a1;
-  g_hookmax = a1 + a2;
-}
-
-void Test()
-{
-	void* pGTAso = dlopen("libGTASA.so", RTLD_NOW);
-	unsigned char * v0 = (unsigned char *) 0xFFFFFFFF;
+	unsigned char hookdata[] =
+	{	
+		0x01, 0xB4, 0x01, 0xB4, 
+		0x01, 0x48, 0x01, 0x90, 
+		0x01, 0xBD, 0x00, 0xBF, 
+		0x00, 0x00, 0x00, 0x00
+	};
 	
-    if ( pGTAso )
-      v0 = (unsigned char *)dlsym(pGTAso, "gzprintf") - 1;
-	  
-    setuphook(v0, 256);
+	*(unsigned long *)&hookdata[12] = (unsigned long)(form)/* | 1*/;
+	
+	memcpy_protect((unsigned char*)((unsigned long)(to) & 0xFFFFFFFE), hookdata, 16);
 }

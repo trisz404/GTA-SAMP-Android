@@ -73,8 +73,7 @@ int CRunningScript__Process(void* p)
 	return 0;
 }
 
-void Test();
-void jmppatch(unsigned char* from, unsigned char* to);
+void ARMBIGJMP(unsigned char* to, unsigned char* form);
 
 class CLoadingScreen
 {
@@ -94,12 +93,10 @@ void InitHooks()
 {
 	unsigned int l_uiBaseAddr = GetBaseAddress();
 	
-	Test();
-	
 	// Disable script loading (main.scm)
 	ARMJMP((unsigned char *)(l_uiBaseAddr + 0x002B9256), (unsigned char *)(l_uiBaseAddr + 0x002B9368));
 	
-	jmppatch((unsigned char *)(l_uiBaseAddr + 0x02B7A54), (unsigned char *)CRunningScript__Process);
+	ARMBIGJMP((unsigned char *)(l_uiBaseAddr + 0x02B7A54), (unsigned char *)CRunningScript__Process);
 	
-	jmppatch((unsigned char *)(LoadingScreen), (unsigned char *)(LoadingScreen_hook));
+	ARMBIGJMP((unsigned char *)(LoadingScreen), (unsigned char *)(LoadingScreen_hook));
 }
