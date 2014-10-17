@@ -30,7 +30,7 @@ public:
 	virtual void SetupLighting(void);
 	virtual void RemoveLighting(bool);
 	virtual void FlagToDestroyWhenNextProcessed(void);
-	virtual void ProcessEntityCollision(CEntity*, CColPoint*);
+	//virtual void ProcessEntityCollision(CEntity*, CColPoint*);
 	
 	
 
