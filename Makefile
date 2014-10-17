@@ -6,7 +6,7 @@ STRIP = $(TOOLCHAIN_PREFIX)strip
 DUMMYDIR = dummy_libs
 DUMMYS = libGTASA.so libImmEmulatorJ.so libSCAnd.so
 
-CFLAGS = -shared -g -Wall -Ofast -pipe -fexceptions -D_THREAD_SAFE -DNDEBUG -std=c++11 -ffunction-sections -fdata-sections -Wl,--gc-sections
+CFLAGS = -shared -g -Wall -Ofast -pipe -D_THREAD_SAFE -DNDEBUG -std=c++11 -ffunction-sections -fdata-sections -Wl,--gc-sections
 CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 CFLAGS += -w
 
@@ -40,6 +40,14 @@ CFLAGS += -DHOST_ENDIAN_IS_LITTLE -DLITTLE_ENDIAN -DRAKSAMP_CLIENT -DNETCODE_OPE
 OBJDIR = obj
 
 TARGET = libSAMP.so
+
+# Fix ARM gcc bugs
+INCDIRS += gnu-libstdc++/include
+INCDIRS += gnu-libstdc++/libs/include
+LIBDIRS += gnu-libstdc++/libs/armeabi-v7a
+LIBS += gnustl_static
+CFLAGS += -frtti -fexceptions
+# CFLAGS += -Wl,-z,defs
 
 default: init $(DUMMYS:%.so=$(DUMMYDIR)/%.so) $(SRCFILES:%.cpp=$(OBJDIR)/$(SRCDIR)/%.o) $(RNFILES:%.cpp=$(OBJDIR)/$(RNDIR)/%.o) $(TARGET)
 	@echo --------------------------------------
