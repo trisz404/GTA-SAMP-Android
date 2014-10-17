@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <GTASA.h>
 
+
 int log(const char *format, ...);
 unsigned int GetBaseAddress();
 void ARMJMP(void* from, void* to);
@@ -17,6 +18,7 @@ int CRunningScript__Process(void* p)
 
 		CPlayerPed::SetupPlayerPed(0);
 		CClothes::RebuildPlayer(CWorld::Players[0], false);
+		
 		
 		if(CWorld::Players[0])
 		{
