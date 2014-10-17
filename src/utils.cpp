@@ -60,7 +60,7 @@ unsigned int GetBaseAddress()
 	return l_uiFuncAddr;
 }
 
-void ARMBIGJMP(void* form, void* to)
+void ARMBIGJMP(void* from, void* to)
 {
 	unsigned char hookdata[] =
 	{	
@@ -75,5 +75,5 @@ void ARMBIGJMP(void* form, void* to)
 	
 	*(unsigned long *)&hookdata[12] = (unsigned long)(to);
 	
-	memcpy_protect((void*)((unsigned long)(form) & 0xFFFFFFFE), hookdata, 16);
+	memcpy_protect((void*)((unsigned long)(from) & 0xFFFFFFFE), hookdata, 16);
 }
