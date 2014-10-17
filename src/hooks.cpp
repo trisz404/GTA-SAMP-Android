@@ -90,10 +90,7 @@ void InitHooks()
 {
 	unsigned int l_uiBaseAddr = GetBaseAddress();
 	
-	// Disable script loading (main.scm)
-	ARMJMP((void *)(l_uiBaseAddr + 0x002B9256), (void *)(l_uiBaseAddr + 0x002B9368));
-	
-	ARMBIGJMP((void *)(l_uiBaseAddr + 0x02B7A54), (void *)CRunningScript__Process);
+	ARMBIGJMP((void *)(&CRunningScript::Process), (void *)CRunningScript__Process);
 	
 	ARMBIGJMP((void *)(LoadingScreen), (void *)(LoadingScreen_hook));
 }
