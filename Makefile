@@ -18,17 +18,39 @@ LIBS = log GTASA
 SRCDIR = src
 SRCFILES = main.cpp utils.cpp hooks.cpp
 
+# EmailSender.cpp FullyConnectedMesh.cpp NetworkIDGenerator.cpp
+RNDIR = raknet
+RNFILES = _findfirst.cpp AsynchronousFileIO.cpp BitStream.cpp \
+	CheckSum.cpp CommandParserInterface.cpp ConsoleServer.cpp \
+	DataBlockEncryptor.cpp DataCompressor.cpp DS_ByteQueue.cpp \
+	DS_HuffmanEncodingTree.cpp DS_Table.cpp \
+	EncodeClassName.cpp ExtendedOverlappedPool.cpp \
+	FileOperations.cpp GetTime.cpp \
+	InternalPacketPool.cpp LinuxStrings.cpp LogCommandParser.cpp \
+	NetworkTypes.cpp PluginInterface.cpp \
+	RakClient.cpp RakNetCommandParser.cpp RakNetStatistics.cpp \
+	RakNetworkFactory.cpp RakPeer.cpp rakserver.cpp RakSleep.cpp \
+	Rand.cpp ReliabilityLayer.cpp rijndael.cpp RPCMap.cpp SHA1.cpp \
+	SimpleMutex.cpp SocketLayer.cpp StringCompressor.cpp StringTable.cpp \
+	SystemAddressList.cpp SystemDatabaseClient.cpp SystemDatabaseServer.cpp \
+	TableSerializer.cpp TCPInterface.cpp TelnetTransport.cpp \
+	SAMP/samp_netencr.cpp
+CFLAGS += -DHOST_ENDIAN_IS_LITTLE -DLITTLE_ENDIAN -DRAKSAMP_CLIENT -DNETCODE_OPENCONNLULZ=6969
+
 OBJDIR = obj
 
 TARGET = libSAMP.so
 
-default: init $(DUMMYS:%.so=$(DUMMYDIR)/%.so) $(SRCFILES:%.cpp=$(OBJDIR)/%.o) $(TARGET)
+default: init $(DUMMYS:%.so=$(DUMMYDIR)/%.so) $(SRCFILES:%.cpp=$(OBJDIR)/$(SRCDIR)/%.o) $(RNFILES:%.cpp=$(OBJDIR)/$(RNDIR)/%.o) $(TARGET)
 	@echo --------------------------------------
 	@echo Build Done
 	@echo --------------------------------------
 
 init:
 	@if not exist $(OBJDIR) mkdir $(OBJDIR)
+	@if not exist $(OBJDIR)\$(SRCDIR) mkdir $(OBJDIR)\$(SRCDIR)
+	@if not exist $(OBJDIR)\$(RNDIR) mkdir $(OBJDIR)\$(RNDIR)
+	@if not exist $(OBJDIR)\$(RNDIR)\SAMP mkdir $(OBJDIR)\$(RNDIR)\SAMP
 	@if not exist $(DUMMYDIR) mkdir $(DUMMYDIR)
 
 $(DUMMYDIR)/%.so:
@@ -37,13 +59,17 @@ $(DUMMYDIR)/%.so:
 	@$(CXX) -shared dummy.cpp -o $@
 	@del dummy.cpp
 
-$(OBJDIR)/%.o:
+$(OBJDIR)/$(SRCDIR)/%.o:
 	@echo compile $(@:$(OBJDIR)/%.o=%.cpp)
-	@$(CXX) $(CFLAGS) $(INCDIRS:%=-I%) -c $(@:$(OBJDIR)/%.o=$(SRCDIR)/%.cpp) -o $@
+	@$(CXX) $(CFLAGS) $(INCDIRS:%=-I%) -c $(@:$(OBJDIR)/%.o=%.cpp) -o $@
+
+$(OBJDIR)/$(RNDIR)/%.o:
+	@echo compile $(@:$(OBJDIR)/%.o=%.cpp)
+	@$(CXX) $(CFLAGS) $(INCDIRS:%=-I%) -c $(@:$(OBJDIR)/%.o=%.cpp) -o $@
 
 $(TARGET):
 	@echo linking $@
-	@$(CXX) $(CFLAGS) $(LIBDIRS:%=-L%) $(SRCFILES:%.cpp=$(OBJDIR)/%.o) $(LIBS:%=-l%) -o $(TARGET)
+	@$(CXX) $(CFLAGS) $(LIBDIRS:%=-L%) $(SRCFILES:%.cpp=$(OBJDIR)/$(SRCDIR)/%.o) $(RNFILES:%.cpp=$(OBJDIR)/$(RNDIR)/%.o) $(LIBS:%=-l%) -o $(TARGET)
 	@$(STRIP) --remove-section=.comment --remove-section=.note --remove-section=.gnu.version --strip-all $(TARGET)
 	
 clean:
