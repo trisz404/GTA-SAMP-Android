@@ -1,7 +1,6 @@
 #include <errno.h>
 #include <GTASA.h>
 
-
 int log(const char *format, ...);
 unsigned int GetBaseAddress();
 void ARMJMP(void* from, void* to);
@@ -18,7 +17,6 @@ int CRunningScript__Process(void* p)
 
 		CPlayerPed::SetupPlayerPed(0);
 		CClothes::RebuildPlayer(CWorld::Players[0], false);
-		
 		
 		if(CWorld::Players[0])
 		{
@@ -59,8 +57,6 @@ void LoadingScreen_hook(char const* a1, char const* a2, char const* a3)
 
 void InitHooks()
 {
-	unsigned int l_uiBaseAddr = GetBaseAddress();
-	
 	/* Remove script processing */
 	ARMBIGJMP((void *)(&CRunningScript::Process), (void *)CRunningScript__Process);
 	

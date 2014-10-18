@@ -16,7 +16,7 @@ public:
 
 	void DbgConnect()
 	{
-		m_rakClientInterface->Connect("192.168.0.35", 7777, 0, 0, 0);
+		m_rakClientInterface->Connect("192.168.1.246", 7777, 0, 0, 0);
 	}
 	
 	

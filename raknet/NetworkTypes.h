@@ -213,7 +213,7 @@ const int PING_TIMES_ARRAY_SIZE = 5;
 /// \attention 12/01/05 REGISTER_AS_REMOTE_PROCEDURE_CALL renamed to REGISTER_STATIC_RPC.  Delete the old name sometime in the future
 //#pragma deprecated(REGISTER_AS_REMOTE_PROCEDURE_CALL)
 //#define REGISTER_AS_REMOTE_PROCEDURE_CALL(networkObject, functionName) REGISTER_STATIC_RPC(networkObject, functionName)
-#define REGISTER_STATIC_RPC(networkObject, functionName) (networkObject)->RegisterAsRemoteProcedureCall((#functionName),(functionName))
+#define REGISTER_STATIC_RPC(networkObject, functionName) { int rpcid = (RPC_##functionName); (networkObject)->RegisterAsRemoteProcedureCall(&rpcid,(functionName)); }
 
 /// \def CLASS_MEMBER_ID
 /// \ingroup RAKNET_RPC

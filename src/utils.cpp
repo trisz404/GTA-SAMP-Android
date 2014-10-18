@@ -44,21 +44,21 @@ void ARMJMP(void* from, void* to)
 	memcpy_protect((void*)((unsigned long)(from) & 0xFFFFFFFE), &opcode, 4);
 }
 
-void* g_vGTAHandle = (void*)0;
+// void* g_vGTAHandle = (void*)0;
 
-unsigned int GetBaseAddress()
-{
-	unsigned int l_uiFuncAddr;
+// unsigned int GetBaseAddress()
+// {
+	// unsigned int l_uiFuncAddr;
 	
-	if(g_vGTAHandle == (void*)0)
-	{
-		g_vGTAHandle = dlopen("libGTASA.so", RTLD_NOW);
-	}
+	// if(g_vGTAHandle == (void*)0)
+	// {
+		// g_vGTAHandle = dlopen("libGTASA.so", RTLD_NOW);
+	// }
 	
-	l_uiFuncAddr = (unsigned int)dlsym(g_vGTAHandle, "_ZN7CEntityC2Ev");	
-	l_uiFuncAddr -= 0x00362EBC + 1;	
-	return l_uiFuncAddr;
-}
+	// l_uiFuncAddr = (unsigned int)dlsym(g_vGTAHandle, "_ZN7CEntityC2Ev");	
+	// l_uiFuncAddr -= 0x00362EBC + 1;	
+	// return l_uiFuncAddr;
+// }
 
 void ARMBIGJMP(void* from, void* to)
 {

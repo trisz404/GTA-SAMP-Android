@@ -18,6 +18,7 @@ SRCFILES = main.cpp utils.cpp hooks.cpp
 
 # EmailSender.cpp FullyConnectedMesh.cpp NetworkIDGenerator.cpp
 RNDIR = raknet
+INCDIRS += $(RNDIR)
 RNFILES = _findfirst.cpp AsynchronousFileIO.cpp BitStream.cpp \
 	CheckSum.cpp CommandParserInterface.cpp ConsoleServer.cpp \
 	DataBlockEncryptor.cpp DataCompressor.cpp DS_ByteQueue.cpp \
