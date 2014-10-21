@@ -14,7 +14,7 @@ LIBDIRS = libs
 LIBS = log GTASA
 
 SRCDIR = src
-SRCFILES = main.cpp utils.cpp hooks.cpp
+SRCFILES = main.cpp utils.cpp hooks.cpp RPC.cpp CNetGame.cpp
 
 # EmailSender.cpp FullyConnectedMesh.cpp NetworkIDGenerator.cpp
 RNDIR = raknet

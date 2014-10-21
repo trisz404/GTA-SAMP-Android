@@ -1,37 +1,44 @@
 #ifndef __CNETGAME_H__
 #define __CNETGAME_H__
 
+#include <RakClient.h>
+#include <RakNetworkFactory.h>
+#include <PacketEnumerations.h>
+#include <StringCompressor.h>
+
+
 class CNetGame
 {
 public:
-	CNetGame()
-	{
-		m_rakClientInterface = RakNetworkFactory::GetRakClientInterface();
-	}
-	
-	~CNetGame()
-	{
-		RakNetworkFactory::DestroyRakClientInterface(m_rakClientInterface);
-	}
 
-	void DbgConnect()
+	CNetGame();
+	~CNetGame();
+
+	void DbgConnect();
+	void Process();
+	
+	/* Packets */
+	void Packet_AUTH_KEY(Packet *p);
+	void Packet_ConnectionSucceeded(Packet *p);
+	
+	
+	RakClientInterface* getRakInterface();
+	
+	static CNetGame* Instance()
 	{
-		m_rakClientInterface->Connect("192.168.1.246", 7777, 0, 0, 0);
-	}
-	
-	
-	RakClientInterface* getRakInterface()
-	{
-		return m_rakClientInterface;
-	}
-	
+		if(m_SingletonInstance == 0)
+		{
+			m_SingletonInstance = new CNetGame();
+		}
+		return m_SingletonInstance;
+	}	
 private:
-
+	static CNetGame*		m_SingletonInstance;
 	RakClientInterface* 	m_rakClientInterface;
-
-
-
 };
+
+
+
 
 
 #endif
