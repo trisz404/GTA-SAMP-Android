@@ -43,9 +43,12 @@ TARGET = libSAMP.so
 # Fix ARM gcc bugs
 INCDIRS += gnu-libstdc++/include
 INCDIRS += gnu-libstdc++/libs/include
+INCDIRS += gnu-libstdc++/libs/armeabi-v7a/include
 LIBDIRS += gnu-libstdc++/libs/armeabi-v7a
 LIBS += gnustl_static
 CFLAGS += -frtti -fexceptions
+
+INCDIRS += ttmath
 
 default: init $(SRCFILES:%.cpp=$(OBJDIR)/$(SRCDIR)/%.o) $(RNFILES:%.cpp=$(OBJDIR)/$(RNDIR)/%.o) $(TARGET)
 	@echo --------------------------------------

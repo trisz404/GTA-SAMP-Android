@@ -11,8 +11,6 @@
 #include "CNetGame.h"
 
 
-
-
 int log(const char *format, ...)
 {
    va_list arg;
@@ -32,8 +30,6 @@ int log(const char *format, ...)
 
 #define _byteswap_ulong(x) __builtin_bswap32(x)
 #define _byteswap_uint64(x) __builtin_bswap64(x)
-
-
 
 void *wantedthread(void* punused)
 {

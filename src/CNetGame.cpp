@@ -82,6 +82,56 @@ void CNetGame::Packet_AUTH_KEY(Packet *p)
 
 
 #define SEND_RPC(networkObject, functionName, packet) { int rpcid = (RPC_##functionName); (networkObject)->RPC(&rpcid, &packet, HIGH_PRIORITY, RELIABLE, 0, FALSE, UNASSIGNED_NETWORK_ID, NULL); }
+#include <ttmathuint.h>
+#include <ttmathuint_x86.h>
+#include <stdlib.h>
+
+bool GenerateSerial(char* input, char** output, int* output_len, int key)
+{
+	ttmath::UInt<100> math;
+	unsigned char sha_hash_bin[20];
+	char sha_hash[41];
+	std::string result;
+
+	/* Hash the input with SHA-1 */
+	
+	CSHA1 raksha;
+	raksha.Update((unsigned char *) input, strlen(input));
+	raksha.Final();
+	raksha.GetHash(sha_hash_bin);
+
+	sha_hash[0] = '\0';
+	for (int i = 0; i < sizeof(sha_hash_bin); ++i)
+		sprintf(sha_hash, "%s%02X", sha_hash, sha_hash_bin[i]);
+	sha_hash[sizeof(sha_hash)] = '\0';
+
+	log(sha_hash);
+
+	/* Encrypt the hash with ttmath */
+
+	math.FromString(sha_hash, 16);
+	math.SerialEncrypt(key);
+	result = math.ToString(16);
+
+	*output_len = result.length();
+	*output = new char[*output_len+1];
+
+	strcpy(*output, result.c_str());
+	return true;
+}
+
+void gen_random(char *s, const int len)
+{
+	static const char alphanum[] =
+		"0123456789"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz";
+
+	for (int i = 0; i < len; ++i)
+		s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
+
+	s[len] = 0;
+}
 
 void CNetGame::Packet_ConnectionSucceeded(Packet *p)
 {
@@ -119,11 +169,15 @@ void CNetGame::Packet_ConnectionSucceeded(Packet *p)
 	
 	unsigned int uiClientChallengeResponse = uiChallenge ^ iVersion;
 	bsSend.Write(uiClientChallengeResponse);
-
-	char* auth_bs = "3D1A1B7E73BD23A0517B01D6FBEA1886A1E7D945A99";
-	BYTE byteAuthBSLen = (BYTE) strlen(auth_bs);
-	bsSend.Write(byteAuthBSLen);
-	bsSend.Write(auth_bs, byteAuthBSLen);
+	
+	char fucku[128];
+	gen_random(fucku, 128);
+	char* auth_bs;
+	int AuthBSLen;
+	GenerateSerial(fucku, &auth_bs, &AuthBSLen, 0x3E9);
+	log(auth_bs);
+	bsSend.Write((BYTE) AuthBSLen);
+	bsSend.Write(auth_bs, AuthBSLen);
 	
 	char szClientVer[] = "0.3z-R1";
 	const BYTE iClientVerLen = (sizeof(szClientVer)-1);
@@ -132,6 +186,8 @@ void CNetGame::Packet_ConnectionSucceeded(Packet *p)
 
 	SEND_RPC(m_rakClientInterface, ClientJoin, bsSend);
 }
+
+
 
 
 
