@@ -3,12 +3,9 @@
 #include <PacketEnumerations.h>
 #include <StringCompressor.h>
 
-
+#include "types.h"
 #include "RPC.h"
-
-
-typedef unsigned short _PlayerID;
-
+#include "CNetGame.h"
 
 
 int log(const char *format, ...);
@@ -21,13 +18,20 @@ void ServerJoin(RPCParameters *rpcParams)
 	char			l_cIsNPC;
 	unsigned char	l_ucNickLen;
 	char			l_szNickName[256];
+	unsigned int 	l_uiColor;
+	CNetGame*		l_pNetGame;
+	
+	l_pNetGame = CNetGame::Instance();	
 	
 	l_bitStream.Read(l_PlayerID);
-	l_bitStream.IgnoreBits(sizeof(unsigned int) * 8);
+	l_bitStream.Read(l_uiColor);
 	l_bitStream.Read(l_cIsNPC);
 	l_bitStream.Read(l_ucNickLen);	
 	l_bitStream.Read(l_szNickName, l_ucNickLen);
 
+	l_pNetGame->getPlayerPool()->New(l_PlayerID, l_szNickName, (bool)l_cIsNPC);
+	
+	
 	log("ServerJoin -> %s (%d)!", l_szNickName, l_PlayerID);
 }
 
@@ -54,6 +58,10 @@ void InitGame(RPCParameters *rpcParams)
 	float m_fGravity;
 	int m_iDeathDropMoney;
 	bool m_bInstagib;
+	CNetGame* l_pNetGame;
+	
+	l_pNetGame = CNetGame::Instance();
+	
 
 	bsInitGame.ReadCompressed(m_bZoneNames);
 	bsInitGame.ReadCompressed(m_bUseCJWalk);
@@ -67,8 +75,10 @@ void InitGame(RPCParameters *rpcParams)
 	bsInitGame.ReadCompressed(m_bTirePopping); // 
 	bsInitGame.Read(m_iSpawnsAvailable);
 	
-	unsigned short MyPlayerID;
+	_PlayerID MyPlayerID;
 	bsInitGame.Read(MyPlayerID);
+	
+	l_pNetGame->getPlayerPool()->setLocalPlayerID(MyPlayerID);
 	
 	bsInitGame.ReadCompressed(m_bShowPlayerTags);
 	bsInitGame.Read(m_iShowPlayerMarkers);

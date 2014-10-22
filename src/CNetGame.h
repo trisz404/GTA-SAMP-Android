@@ -6,6 +6,7 @@
 #include <PacketEnumerations.h>
 #include <StringCompressor.h>
 
+#include "CPlayerPool.h"
 
 class CNetGame
 {
@@ -23,6 +24,8 @@ public:
 	
 	
 	RakClientInterface* getRakInterface();
+	CPlayerPool*		getPlayerPool();
+	
 	
 	static CNetGame* Instance()
 	{
@@ -35,6 +38,7 @@ public:
 private:
 	static CNetGame*		m_SingletonInstance;
 	RakClientInterface* 	m_rakClientInterface;
+	CPlayerPool*			m_PlayerPool;
 };
 
 

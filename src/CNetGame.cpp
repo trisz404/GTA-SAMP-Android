@@ -2,6 +2,7 @@
 #include "RPC.h"
 #include "AuthTable.h"
 
+
 CNetGame* CNetGame::m_SingletonInstance = 0;
 
 
@@ -10,14 +11,22 @@ int log(const char *format, ...);
 
 CNetGame::CNetGame()
 {
-	m_rakClientInterface = RakNetworkFactory::GetRakClientInterface();
-	
+	m_rakClientInterface = RakNetworkFactory::GetRakClientInterface();	
 	RegisterRPCs(m_rakClientInterface);	
+	
+	m_PlayerPool = new CPlayerPool();
+	
 }
 
 CNetGame::~CNetGame()
 {
 	RakNetworkFactory::DestroyRakClientInterface(m_rakClientInterface);
+	
+	if(m_PlayerPool)
+	{
+		delete m_PlayerPool;
+		m_PlayerPool = 0;
+	}
 }
 
 void CNetGame::DbgConnect()
@@ -42,6 +51,7 @@ void CNetGame::Process()
 			case ID_CONNECTION_ATTEMPT_FAILED: log("Failed to connect!"); break;
 			case ID_CONNECTION_REQUEST_ACCEPTED: log("Request accepted!"); Packet_ConnectionSucceeded(pPacket); break;
 			case ID_AUTH_KEY: log("Auth key!"); Packet_AUTH_KEY(pPacket); break;
+			case ID_PLAYER_SYNC: m_PlayerPool->ProcessPlayerSync(pPacket); break;
 		}
 	
 		m_rakClientInterface->DeallocatePacket(pPacket);	
@@ -49,11 +59,16 @@ void CNetGame::Process()
 }
 
 
-
 RakClientInterface* CNetGame::getRakInterface()
 {
 	return m_rakClientInterface;
 }
+
+CPlayerPool* CNetGame::getPlayerPool()
+{
+	return m_PlayerPool;
+}
+
 
 void CNetGame::Packet_AUTH_KEY(Packet *p)
 {
