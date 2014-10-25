@@ -9,11 +9,10 @@ struct Placement
 
 class CPlaceable
 {
-private:
-	Placement m_Placement;
-	int m_pMatrix;
-	
 public:
+	Placement m_Placement;
+	CMatrixLink* m_pMatrix;
+	
 	CPlaceable();
 	virtual ~CPlaceable();
 };

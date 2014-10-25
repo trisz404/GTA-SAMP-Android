@@ -6,6 +6,7 @@
 #include "CClothes.h"
 #include "CEntity.h"
 #include "CLoadingScreen.h"
+#include "CMatrix.h"
 #include "CObject.h"
 #include "CPed.h"
 #include "CPhysical.h"
@@ -24,5 +25,7 @@
 extern int gGameState;
 CPlayerPed* FindPlayerPed(int id);
 void ToggleDebugFPS();
+
+void Render2dStuffAfterFade();
 
 #endif
