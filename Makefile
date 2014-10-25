@@ -60,12 +60,16 @@ init:
 	@if not exist $(OBJDIR)\$(SRCDIR) mkdir $(OBJDIR)\$(SRCDIR)
 	@if not exist $(OBJDIR)\$(RNDIR) mkdir $(OBJDIR)\$(RNDIR)
 	@if not exist $(OBJDIR)\$(RNDIR)\SAMP mkdir $(OBJDIR)\$(RNDIR)\SAMP
+	@if exist $(TARGET) del $(TARGET)
 
-$(OBJDIR)/$(SRCDIR)/%.o:
+%.cpp:
+	@echo $@
+
+$(OBJDIR)/$(SRCDIR)/%.o: $(SRCDIR)/%.cpp
 	@echo compile $(@:$(OBJDIR)/%.o=%.cpp)
 	@$(CXX) $(CFLAGS) $(INCDIRS:%=-I%) -c $(@:$(OBJDIR)/%.o=%.cpp) -o $@
 
-$(OBJDIR)/$(RNDIR)/%.o:
+$(OBJDIR)/$(RNDIR)/%.o: $(RNDIR)/%.cpp
 	@echo compile $(@:$(OBJDIR)/%.o=%.cpp)
 	@$(CXX) $(CFLAGS) $(INCDIRS:%=-I%) -c $(@:$(OBJDIR)/%.o=%.cpp) -o $@
 
