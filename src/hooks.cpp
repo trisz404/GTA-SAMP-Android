@@ -1,10 +1,43 @@
 #include <errno.h>
 #include <GTASA.h>
+#include "CNetGame.h"
 
 int log(const char *format, ...);
 unsigned int GetBaseAddress();
 void ARMJMP(void* from, void* to);
 void ARMBIGJMP(void* to, void* form);
+
+class CAEPedSpeechAudioEntity { public: static void Initialise(CEntity *); };
+
+class CTask
+{
+	
+};
+
+class CTaskSimplePlayerOnFoot : public CTask
+{
+public:
+	char reverse_me[52];
+
+	CTaskSimplePlayerOnFoot();
+};
+
+class CTaskComplexFacial : public CTask
+{
+public:
+	char reverse_me[32];
+
+	CTaskComplexFacial();
+};
+
+class CTaskManager
+{
+public:
+	int reverse_me;
+
+	void SetTask(CTask*, int, bool);
+	void SetTaskSecondary(CTask*, int);
+};
 
 int CRunningScript__Process(void* p)
 {
@@ -14,29 +47,16 @@ int CRunningScript__Process(void* p)
 	{
 		CStreaming::RequestSpecialModel(0, "player", 26);
 		CStreaming::LoadAllRequestedModels(true);
-
-		CPlayerPed::SetupPlayerPed(0);
-		CClothes::RebuildPlayer(CWorld::Players[0], false);
 		
-		if(CWorld::Players[0])
-		{
-			log("CRunningScript__Process() -> Teleporting player !");			
-			CWorld::Players[0]->Teleport(CVector(0.0f, 0.0f, 3.0f), 0);			
-		}
-		else
-			log("CRunningScript__Process() -> Teleporting player failed, nullptr!");
-
-		// CPlayerPed::SetupPlayerPed(1);
-		// CClothes::RebuildPlayer(CWorld::Players[101], false);
+		CWorld::PlayerInFocus = 0;
+		CPlayerPed::SetupPlayerPed(CWorld::PlayerInFocus);
+		CClothes::RebuildPlayer(FindPlayerPed(-1), false);
+		FindPlayerPed(-1)->Teleport(CVector(0.0f, 0.0f, 3.0f), 0);
 		
-		// if(CWorld::Players[101])
-		// {
-			// log("CRunningScript__Process() -> Teleporting player !");			
-			// CWorld::Players[101]->Teleport(CVector(0.0f, 1.0f, 3.0f), 0);			
-		// }
-		// else
-			// log("CRunningScript__Process() -> Teleporting player failed, nullptr!");
-			
+		// CWorld::Players[202] = new CPlayerPed(1, false);
+		// CWorld::Add(CWorld::Players[202]);
+		// CWorld::Players[202]->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
+		
 		// CObject* l_pObject = CObject::Create(3578, false);
 		
 		// if(l_pObject)
@@ -106,9 +126,13 @@ public:
 	++l; \
 }
 
+unsigned int GetTickCount();
+extern unsigned int lastOnFootSyncTick;
+extern int g_iNetModeNormalOnfootSendRate;
+
 void RenderSAMP()
 {
-	if(!CWorld::Players[0])
+	if(!FindPlayerPed(-1))
 		return;
 	
 	CFont::SetFontStyle(1);
@@ -122,17 +146,28 @@ void RenderSAMP()
 	CFont::SetOrientation(1);
 	
 	float l = 0;
-	PrintLine("X: %.1f Y: %.1f Z: %.1f A: %.1f", CWorld::Players[0]->m_Placement.pos.x, CWorld::Players[0]->m_Placement.pos.y, CWorld::Players[0]->m_Placement.pos.z, CWorld::Players[0]->m_Placement.angle);
+	PrintLine("X: %.1f Y: %.1f Z: %.1f A: %.1f", FindPlayerPed(-1)->m_Placement.pos.x, FindPlayerPed(-1)->m_Placement.pos.y, FindPlayerPed(-1)->m_Placement.pos.z, FindPlayerPed(-1)->m_Placement.angle);
 	
-	if(CWorld::Players[0]->m_pMatrix)
+	if (FindPlayerPed(-1)->m_pMatrix)
 	{
 		PrintLine("");
-		PrintLine("right: X: %.1f Y: %.1f Z: %.1f", CWorld::Players[0]->m_pMatrix->m_RwMatrix.right.x, CWorld::Players[0]->m_pMatrix->m_RwMatrix.right.y, CWorld::Players[0]->m_pMatrix->m_RwMatrix.right.z);
-		PrintLine("flags: %X", CWorld::Players[0]->m_pMatrix->m_RwMatrix.flags);
-		PrintLine("up: X: %.1f Y: %.1f Z: %.1f", CWorld::Players[0]->m_pMatrix->m_RwMatrix.up.x, CWorld::Players[0]->m_pMatrix->m_RwMatrix.up.y, CWorld::Players[0]->m_pMatrix->m_RwMatrix.up.z);
-		PrintLine("at: X: %.1f Y: %.1f Z: %.1f", CWorld::Players[0]->m_pMatrix->m_RwMatrix.at.x, CWorld::Players[0]->m_pMatrix->m_RwMatrix.at.y, CWorld::Players[0]->m_pMatrix->m_RwMatrix.at.z);
-		PrintLine("pos: X: %.1f Y: %.1f Z: %.1f", CWorld::Players[0]->m_pMatrix->m_RwMatrix.pos.x, CWorld::Players[0]->m_pMatrix->m_RwMatrix.pos.y, CWorld::Players[0]->m_pMatrix->m_RwMatrix.pos.z);
+		PrintLine("right: X: %.1f Y: %.1f Z: %.1f", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.right.x, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.right.y, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.right.z);
+		PrintLine("flags: %X", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.flags);
+		PrintLine("up: X: %.1f Y: %.1f Z: %.1f", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.up.x, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.up.y, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.up.z);
+		PrintLine("at: X: %.1f Y: %.1f Z: %.1f", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.at.x, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.at.y, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.at.z);
+		PrintLine("pos: X: %.1f Y: %.1f Z: %.1f", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.pos.x, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.pos.y, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.pos.z);
 	}
+	
+	CPlayer * player = CNetGame::Instance()->getPlayerPool()->GetPlayer(1);
+	if (player)
+	{
+		PrintLine("");
+		PrintLine("X: %.1f Y: %.1f Z: %.1f", player->m_onFootSyncData.position.x, player->m_onFootSyncData.position.y, player->m_onFootSyncData.position.z);
+	}
+	
+	PrintLine("");
+	PrintLine("Tick: %i, lastOnFootSyncTick: %i", GetTickCount(), lastOnFootSyncTick);
+	PrintLine("g_iNetModeNormalOnfootSendRate: %i", g_iNetModeNormalOnfootSendRate);
 }
 
 class CHud { public: static void DrawAfterFade(); };

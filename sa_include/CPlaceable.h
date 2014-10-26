@@ -7,6 +7,7 @@ struct Placement
 	float angle;
 };
 
+class CMatrixLink;
 class CPlaceable
 {
 public:
