@@ -53,14 +53,17 @@ void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 	
 	log("Proccess Sync...");
 	
+	if(!m_pPed->m_pMatrix)
+		return;
+		
+	CWorld::Remove(m_pPed);
+	
 	// Left & Right Keys on foot
 	l_BitStream.Read(l_bIsDataSynced);	
 	if(l_bIsDataSynced)
 	{
 		l_BitStream.Read(m_onFootSyncData.leftRightKeysOnfoot);
 	}
-	
-	log("Proccess Sync...");
 	
 	// Up & Down Keys on foot
 	l_BitStream.Read(l_bIsDataSynced);	
@@ -73,12 +76,23 @@ void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 	l_BitStream.Read(m_onFootSyncData.keysOnfoot);
 	
 	// Position
-	l_BitStream.Read(m_onFootSyncData.position.x);
-	l_BitStream.Read(m_onFootSyncData.position.y);
-	l_BitStream.Read(m_onFootSyncData.position.z);
+	l_BitStream.Read(m_pPed->m_pMatrix->m_RwMatrix.pos.x);
+	l_BitStream.Read(m_pPed->m_pMatrix->m_RwMatrix.pos.y);
+	l_BitStream.Read(m_pPed->m_pMatrix->m_RwMatrix.pos.z);
 
 	// Rotation
-	// l_BitStream.ReadNormQuat(m_onFootSyncData.quaterRotation.W, m_onFootSyncData.quaterRotation.X, m_onFootSyncData.quaterRotation.Y, m_onFootSyncData.quaterRotation.Z);
+	/*l_BitStream.ReadNormQuat(
+		m_onFootSyncData.quaterRotation[0],
+		m_onFootSyncData.quaterRotation[1],
+		m_onFootSyncData.quaterRotation[2],
+		m_onFootSyncData.quaterRotation[3]
+	);*/
+	
+	/*l_BitStream.ReadOrthMatrix(
+		m_pPed->m_pMatrix->m_RwMatrix.right.x, m_pPed->m_pMatrix->m_RwMatrix.right.y, m_pPed->m_pMatrix->m_RwMatrix.right.z,
+		m_pPed->m_pMatrix->m_RwMatrix.up.x, m_pPed->m_pMatrix->m_RwMatrix.up.y, m_pPed->m_pMatrix->m_RwMatrix.up.z,
+		m_pPed->m_pMatrix->m_RwMatrix.at.x, m_pPed->m_pMatrix->m_RwMatrix.at.y, m_pPed->m_pMatrix->m_RwMatrix.at.z
+	);*/
 	
 	// The ReadNormQuat crash the game. :S 
 	l_BitStream.IgnoreBits(4 + 3 * 4 * 8);
@@ -115,30 +129,7 @@ void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 		l_BitStream.Read(m_onFootSyncData.animationIndex);
 	}
 	
-	if(m_pPed->m_pMatrix)
-	{
-		CWorld::Remove(m_pPed);
-
-		/*m_pPed->m_pMatrix->m_RwMatrix.right.x = CWorld::Players[0]->m_pMatrix->m_RwMatrix.right.x;
-		m_pPed->m_pMatrix->m_RwMatrix.right.y = CWorld::Players[0]->m_pMatrix->m_RwMatrix.right.y;
-		m_pPed->m_pMatrix->m_RwMatrix.right.z = CWorld::Players[0]->m_pMatrix->m_RwMatrix.right.z;
-
-		m_pPed->m_pMatrix->m_RwMatrix.flags = CWorld::Players[0]->m_pMatrix->m_RwMatrix.flags;
-
-		m_pPed->m_pMatrix->m_RwMatrix.up.x = CWorld::Players[0]->m_pMatrix->m_RwMatrix.up.x;
-		m_pPed->m_pMatrix->m_RwMatrix.up.y = CWorld::Players[0]->m_pMatrix->m_RwMatrix.up.y;
-		m_pPed->m_pMatrix->m_RwMatrix.up.z = CWorld::Players[0]->m_pMatrix->m_RwMatrix.up.z;
-
-		m_pPed->m_pMatrix->m_RwMatrix.at.x = CWorld::Players[0]->m_pMatrix->m_RwMatrix.at.x;
-		m_pPed->m_pMatrix->m_RwMatrix.at.y = CWorld::Players[0]->m_pMatrix->m_RwMatrix.at.y;
-		m_pPed->m_pMatrix->m_RwMatrix.at.z = CWorld::Players[0]->m_pMatrix->m_RwMatrix.at.z;*/
-
-		m_pPed->m_pMatrix->m_RwMatrix.pos.x = m_onFootSyncData.position.x;
-		m_pPed->m_pMatrix->m_RwMatrix.pos.y = m_onFootSyncData.position.y;
-		m_pPed->m_pMatrix->m_RwMatrix.pos.z = m_onFootSyncData.position.z;
-
-		CWorld::Add(m_pPed);
-	}
+	CWorld::Add(m_pPed);
 }
 
 

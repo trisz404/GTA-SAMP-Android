@@ -6,12 +6,6 @@
 #include <GTASA.h>
 #include <RakClient.h>
 
-
-typedef struct QuaternionVector_t
-{
-	float W, X, Y, Z;
-} tQuaternionVector;
-
 typedef struct ON_FOOT_SYNC_t // size 0x44
 {
 #pragma pack( 1 )
@@ -19,7 +13,7 @@ typedef struct ON_FOOT_SYNC_t // size 0x44
 	uint16_t			updownKeysOnfoot;						// + 0x0002
 	uint16_t			keysOnfoot;								// + 0x0004
 	CVector				position;								// + 0x0006 -> 0x000E
-	tQuaternionVector	quaterRotation;							// + 0x0012 -> 0x001E
+	float				quaterRotation[4];							// + 0x0012 -> 0x001E
 	uint8_t				health;									// + 0x0022
 	uint8_t				armour;									// + 0x0023
 	uint8_t				weapon;									// + 0x0024

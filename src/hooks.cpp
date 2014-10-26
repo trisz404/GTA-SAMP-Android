@@ -7,39 +7,7 @@ unsigned int GetBaseAddress();
 void ARMJMP(void* from, void* to);
 void ARMBIGJMP(void* to, void* form);
 
-class CAEPedSpeechAudioEntity { public: static void Initialise(CEntity *); };
-
-class CTask
-{
-	
-};
-
-class CTaskSimplePlayerOnFoot : public CTask
-{
-public:
-	char reverse_me[52];
-
-	CTaskSimplePlayerOnFoot();
-};
-
-class CTaskComplexFacial : public CTask
-{
-public:
-	char reverse_me[32];
-
-	CTaskComplexFacial();
-};
-
-class CTaskManager
-{
-public:
-	int reverse_me;
-
-	void SetTask(CTask*, int, bool);
-	void SetTaskSecondary(CTask*, int);
-};
-
-int CRunningScript__Process(void* p)
+int CRunningScript__Process_hook(void* p)
 {
 	static bool l_bProcessed =	false;
 	
@@ -53,24 +21,12 @@ int CRunningScript__Process(void* p)
 		CClothes::RebuildPlayer(FindPlayerPed(-1), false);
 		FindPlayerPed(-1)->Teleport(CVector(0.0f, 0.0f, 3.0f), 0);
 		
-		// CWorld::Players[202] = new CPlayerPed(1, false);
-		// CWorld::Add(CWorld::Players[202]);
-		// CWorld::Players[202]->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
-		
-		// CObject* l_pObject = CObject::Create(3578, false);
-		
-		// if(l_pObject)
-		// {
-			// log("Teleporting object");
-			// l_pObject->Teleport(CVector(10.0, 10.0, 3.0), 0);
-		// }
-		
 		l_bProcessed = true;
 	}
 	return 0;
 }
 
-int CPopCycle__Update()
+int CPopCycle__Update_hook()
 {
 	// we do nothing !
 	return 0;
@@ -82,39 +38,6 @@ void LoadingScreen_hook(char const* a1, char const* a2, char const* a3)
 	
 	CLoadingScreen::NewChunkLoaded();
 }
-
-class CRGBA
-{
-private:
-	float r;
-	float g;
-	float b;
-	float a;
-	
-public:
-	CRGBA(unsigned char, unsigned char, unsigned char, unsigned char);
-	~CRGBA();
-};
-
-void AsciiToGxtChar(const char*, unsigned short *);
-class CFont
-{
-public:
-	static void PrintString(float, float, unsigned short *);
-	static void RenderFontBuffer();
-	static float GetHeight(bool);
-	
-	static void SetFontStyle(unsigned char);
-	static void SetBackground(unsigned char, unsigned char);
-	static void SetBackgroundColor(CRGBA);
-	static void SetWrapx(float);
-	static void SetProportional(unsigned char);
-	static void SetColor(CRGBA);
-	static void SetEdge(signed char);
-	static void SetDropColor(CRGBA);
-	static void SetScale(float);
-	static void SetOrientation(unsigned char);
-};
 
 #define PrintLine(line, ...) \
 { \
@@ -132,7 +55,8 @@ extern int g_iNetModeNormalOnfootSendRate;
 
 void RenderSAMP()
 {
-	if(!FindPlayerPed(-1))
+	CPlayerPed* ped = FindPlayerPed(-1);
+	if(!ped)
 		return;
 	
 	CFont::SetFontStyle(1);
@@ -146,16 +70,16 @@ void RenderSAMP()
 	CFont::SetOrientation(1);
 	
 	float l = 0;
-	PrintLine("X: %.1f Y: %.1f Z: %.1f A: %.1f", FindPlayerPed(-1)->m_Placement.pos.x, FindPlayerPed(-1)->m_Placement.pos.y, FindPlayerPed(-1)->m_Placement.pos.z, FindPlayerPed(-1)->m_Placement.angle);
+	PrintLine("X: %.1f Y: %.1f Z: %.1f A: %.1f", ped->m_Placement.pos.x, ped->m_Placement.pos.y, ped->m_Placement.pos.z, ped->m_Placement.angle);
 	
-	if (FindPlayerPed(-1)->m_pMatrix)
+	if (ped->m_pMatrix)
 	{
 		PrintLine("");
-		PrintLine("right: X: %.1f Y: %.1f Z: %.1f", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.right.x, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.right.y, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.right.z);
-		PrintLine("flags: %X", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.flags);
-		PrintLine("up: X: %.1f Y: %.1f Z: %.1f", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.up.x, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.up.y, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.up.z);
-		PrintLine("at: X: %.1f Y: %.1f Z: %.1f", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.at.x, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.at.y, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.at.z);
-		PrintLine("pos: X: %.1f Y: %.1f Z: %.1f", FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.pos.x, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.pos.y, FindPlayerPed(-1)->m_pMatrix->m_RwMatrix.pos.z);
+		PrintLine("right: X: %.1f Y: %.1f Z: %.1f", ped->m_pMatrix->m_RwMatrix.right.x, ped->m_pMatrix->m_RwMatrix.right.y, ped->m_pMatrix->m_RwMatrix.right.z);
+		PrintLine("flags: %X", ped->m_pMatrix->m_RwMatrix.flags);
+		PrintLine("up: X: %.1f Y: %.1f Z: %.1f", ped->m_pMatrix->m_RwMatrix.up.x, ped->m_pMatrix->m_RwMatrix.up.y, ped->m_pMatrix->m_RwMatrix.up.z);
+		PrintLine("at: X: %.1f Y: %.1f Z: %.1f", ped->m_pMatrix->m_RwMatrix.at.x, ped->m_pMatrix->m_RwMatrix.at.y, ped->m_pMatrix->m_RwMatrix.at.z);
+		PrintLine("pos: X: %.1f Y: %.1f Z: %.1f", ped->m_pMatrix->m_RwMatrix.pos.x, ped->m_pMatrix->m_RwMatrix.pos.y, ped->m_pMatrix->m_RwMatrix.pos.z);
 	}
 	
 	CPlayer * player = CNetGame::Instance()->getPlayerPool()->GetPlayer(1);
@@ -169,12 +93,6 @@ void RenderSAMP()
 	PrintLine("Tick: %i, lastOnFootSyncTick: %i", GetTickCount(), lastOnFootSyncTick);
 	PrintLine("g_iNetModeNormalOnfootSendRate: %i", g_iNetModeNormalOnfootSendRate);
 }
-
-class CHud { public: static void DrawAfterFade(); };
-void TemporaryFPSVisualization();
-void emu_GammaSet(unsigned char);
-class CMessages { public: static void Display(unsigned char); };
-class CCredits { public: static void Render(); };
 
 void Render2dStuffAfterFade_hook()
 {
@@ -191,10 +109,10 @@ void Render2dStuffAfterFade_hook()
 void InitHooks()
 {
 	// Remove script processing
-	ARMBIGJMP((void *)(&CRunningScript::Process), (void *)(CRunningScript__Process));
+	ARMBIGJMP((void *)(&CRunningScript::Process), (void *)(CRunningScript__Process_hook));
 	
 	// Remove population spawning
-	ARMBIGJMP((void *)(CPopCycle::Update), (void *)(CPopCycle__Update));
+	ARMBIGJMP((void *)(CPopCycle::Update), (void *)(CPopCycle__Update_hook));
 	
 	// Hook the loading screen function
 	ARMBIGJMP((void *)(LoadingScreen), (void *)(LoadingScreen_hook));

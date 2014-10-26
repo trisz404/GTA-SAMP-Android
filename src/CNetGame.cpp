@@ -168,7 +168,7 @@ void gen_random(char *s, const int len)
 	s[len] = 0;
 }
 
-void RwMatrixToQuaternion(RwMatrix matrix, tQuaternionVector& qrot)
+float* RwMatrixToQuaternion(RwMatrix matrix)
 {
 #define m00 matrix.right.x
 #define m01 matrix.right.y
@@ -219,11 +219,15 @@ void RwMatrixToQuaternion(RwMatrix matrix, tQuaternionVector& qrot)
 	qx = copysign(qx, m21 - m12);
 	qy = copysign(qy, m02 - m20);
 	qz = copysign(qz, m10 - m01);
+
+	float* ret = new float[4];
 	
-	qrot.W = 1.0f;
-	qrot.X = 1.0f;
-	qrot.Y = 1.0f;
-	qrot.Z = 1.0f;
+	ret[0] = qw;
+	ret[1] = qx;
+	ret[2] = qy;
+	ret[3] = qz;
+	
+	return ret;
 }
 
 void CNetGame::DoSync()
@@ -236,7 +240,9 @@ void CNetGame::DoSync()
 		
 		syncData.health = 100;
 		
-		RwMatrixToQuaternion(ped->m_pMatrix->m_RwMatrix, syncData.quaterRotation);
+		float* asd = RwMatrixToQuaternion(ped->m_pMatrix->m_RwMatrix);
+		memcpy(syncData.quaterRotation, asd, 4 * sizeof(float));
+		delete [] asd;
 		
 		syncData.position.x = ped->m_pMatrix->m_RwMatrix.pos.x;
 		syncData.position.y = ped->m_pMatrix->m_RwMatrix.pos.y;
