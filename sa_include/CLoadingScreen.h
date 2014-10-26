@@ -7,5 +7,6 @@ public:
 	static void NewChunkLoaded();
 };
 
+void LoadingScreen(char const*, char const*, char const*);
 
 #endif

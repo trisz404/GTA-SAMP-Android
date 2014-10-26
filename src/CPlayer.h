@@ -49,9 +49,10 @@ public:
 	void WorldAdd();
 	void WorldRemove();
 	
-private:
+
 
 	ON_FOOT_SYNC_t	m_onFootSyncData;
+private:
 	char*			m_pszNickName;
 	bool			m_bIsNPC;
 	bool			m_bIsStreamed;

@@ -17,14 +17,21 @@ CLocalPlayer::~CLocalPlayer()
 }
 
 
-void CLocalPlayer::CreateGTAPlayer()
+CPlayerPed* CLocalPlayer::CreateGTAPlayer()
 {
 	CStreaming::RequestSpecialModel(0, "player", 26);
 	CStreaming::LoadAllRequestedModels(true);
 	
-	CPlayerPed::SetupPlayerPed(0);
-	CClothes::RebuildPlayer(CWorld::Players[0], false);
+	CWorld::PlayerInFocus = 0;
+	CPlayerPed::SetupPlayerPed(CWorld::PlayerInFocus);
 	
 	
-	m_GTAPlayerPed = CWorld::Players[0];
+	m_GTAPlayerPed = FindPlayerPed(-1);
+	CClothes::RebuildPlayer(m_GTAPlayerPed, false);
+	return m_GTAPlayerPed;
+}
+
+CPlayerPed* CLocalPlayer::GetGTAPlayer()
+{
+	return m_GTAPlayerPed;
 }

@@ -6,10 +6,10 @@
 class CPlayerPed : public CPed
 {
 private:
-	int reverse_me;
+	char reverse_me[8];
 	
 public:
-	CPlayerPed();
+	CPlayerPed(int, bool);
 	virtual ~CPlayerPed();
 	
 	void SetWantedLevel(int a2);

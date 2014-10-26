@@ -11,7 +11,8 @@ public:
 	CLocalPlayer();
 	~CLocalPlayer();
 
-	void CreateGTAPlayer();
+	CPlayerPed*			CreateGTAPlayer();
+	CPlayerPed* 		GetGTAPlayer();
 
 private:
 
