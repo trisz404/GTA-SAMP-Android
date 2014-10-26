@@ -15,7 +15,7 @@ LIBS = log GTASA
 
 SRCDIR = src
 SRCFILES = main.cpp utils.cpp hooks.cpp RPC.cpp CNetGame.cpp CPlayerPool.cpp CPlayer.cpp
-
+SRCFILES += CLocalPlayer.cpp
 # EmailSender.cpp FullyConnectedMesh.cpp NetworkIDGenerator.cpp
 RNDIR = raknet
 INCDIRS += $(RNDIR)

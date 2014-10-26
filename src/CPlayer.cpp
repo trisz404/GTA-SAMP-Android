@@ -1,6 +1,7 @@
 #include "CPlayer.h"
 #include <string.h>
 
+
 CPlayer::CPlayer()
 {
 	m_pPed = new CPlayerPed(1, true);
@@ -9,6 +10,7 @@ CPlayer::CPlayer()
 	CWorld::Add(m_pPed);
 	
 	m_pPed->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
+	m_bIsStreamed	= false;
 }
 
 CPlayer::~CPlayer()
@@ -132,14 +134,58 @@ void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 	CWorld::Add(m_pPed);
 }
 
+void CPlayer::StreamIn(RPCParameters *rpcParams)
+{
+	int i;
+	RakNet::BitStream 	l_BitStream(rpcParams->input, rpcParams->numberOfBitsOfData / 8 + 1, false);
 
+	l_BitStream.IgnoreBits(sizeof(_PlayerID) * 8); // PlayerID
+	
+	/* Team ID */
+	l_BitStream.Read(m_iTeamID);
+	/* Skin ID*/
+	l_BitStream.Read(m_iSkinID);
+	
+	/* Position */
+	l_BitStream.Read(m_onFootSyncData.position.x);
+	l_BitStream.Read(m_onFootSyncData.position.y);
+	l_BitStream.Read(m_onFootSyncData.position.z);
+	
+	/* Facing angle */
+	l_BitStream.Read(m_fFacingAngle);
+	
+	/* NickName color */
+	l_BitStream.Read(m_uiNickColor);
+	
+	/* Fighting Style */
+	l_BitStream.Read(m_iFightingStyle);
+	
+	/* Skill Levels */
+	for(i = 0; i < MAX_SKILL_LEVEL; i++)
+	{
+		l_BitStream.Read(m_iSkillLevel[i]);
+	}
+	
 
+	m_bIsStreamed = true;
+	WorldAdd();
+}
 
+void CPlayer::StreamOut()
+{
+	m_bIsStreamed = false;
+	WorldRemove();
+}
 
+void CPlayer::WorldAdd()
+{
 
+}
 
+void CPlayer::WorldRemove()
+{
 
-
+}
 
 
 

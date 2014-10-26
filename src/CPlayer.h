@@ -6,6 +6,17 @@
 #include <GTASA.h>
 #include <RakClient.h>
 
+<<<<<<< HEAD
+=======
+#define MAX_SKILL_LEVEL	11
+
+
+typedef struct QuaternionVector_t
+{
+	float W, X, Y, Z;
+} tQuaternionVector;
+
+>>>>>>> origin/master
 typedef struct ON_FOOT_SYNC_t // size 0x44
 {
 #pragma pack( 1 )
@@ -35,11 +46,24 @@ public:
 	
 	void ProcessPlayerSync(Packet* a_pPacket);
 	
-//private:
-	CPlayerPed*		m_pPed = nullptr;
+	void StreamIn(RPCParameters *rpcParams);
+	void StreamOut();
+	
+	void WorldAdd();
+	void WorldRemove();
+
+	CPlayerPed* 	m_pPed = nullptr;
 	ON_FOOT_SYNC_t	m_onFootSyncData;
-	char*			m_pszNickName = nullptr;
-	bool			m_bIsNPC = false;;
+	char*			m_pszNickName;
+	bool			m_bIsStreamed;
+	bool m_bIsNPC = false;;	
+	uint32_t		m_uiNickColor;	
+	uint8_t			m_iTeamID;
+	int				m_iSkinID;
+	uint8_t			m_iFightingStyle;
+	uint16_t		m_iSkillLevel[MAX_SKILL_LEVEL];
+	float			m_fFacingAngle;
+	
 };
 
 

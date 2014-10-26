@@ -13,7 +13,8 @@ public:
 	virtual ~CPlayerPed();
 	
 	void SetWantedLevel(int a2);
-	static void SetupPlayerPed(int);
+	static void SetupPlayerPed(int a_iIndex);
+	static void RemovePlayerPed(int a_iIndex);
 	
 };
 

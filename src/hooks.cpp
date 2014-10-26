@@ -13,13 +13,18 @@ int CRunningScript__Process_hook(void* p)
 	
 	if(l_bProcessed == false)
 	{
-		CStreaming::RequestSpecialModel(0, "player", 26);
-		CStreaming::LoadAllRequestedModels(true);
+		CNetGame* 	l_pNetGame = CNetGame::Instance();
+		CPlayerPed*	l_pLocalPlayer;
+	
+		l_pLocalPlayer = l_pNetGame->getPlayerPool()->GetLocalPlayer()->CreateGTAPlayer();
 		
-		CWorld::PlayerInFocus = 0;
-		CPlayerPed::SetupPlayerPed(CWorld::PlayerInFocus);
-		CClothes::RebuildPlayer(FindPlayerPed(-1), false);
-		FindPlayerPed(-1)->Teleport(CVector(0.0f, 0.0f, 3.0f), 0);
+		if(l_pLocalPlayer)
+		{
+			l_pLocalPlayer->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
+		}
+	
+	
+		
 		
 		l_bProcessed = true;
 	}
