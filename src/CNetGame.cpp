@@ -6,9 +6,7 @@
 
 CNetGame* CNetGame::m_SingletonInstance = 0;
 
-
 int log(const char *format, ...);
-
 
 CNetGame::CNetGame()
 {
@@ -89,7 +87,6 @@ CPlayerPool* CNetGame::getPlayerPool()
 	return m_PlayerPool;
 }
 
-
 void CNetGame::Packet_AUTH_KEY(Packet *p)
 {
 	char * auth_key = "";
@@ -114,7 +111,6 @@ void CNetGame::Packet_AUTH_KEY(Packet *p)
 
 	m_rakClientInterface->Send(&bsKey, SYSTEM_PRIORITY, RELIABLE, NULL);
 }
-
 
 #define SEND_RPC(networkObject, functionName, packet) { int rpcid = (RPC_##functionName); (networkObject)->RPC(&rpcid, &packet, HIGH_PRIORITY, RELIABLE, 0, FALSE, UNASSIGNED_NETWORK_ID, NULL); }
 #include <ttmathuint.h>
@@ -297,7 +293,7 @@ void CNetGame::Packet_ConnectionSucceeded(Packet *p)
 	char* auth_bs;
 	int AuthBSLen;
 	GenerateSerial(fucku, &auth_bs, &AuthBSLen, 0x3E9);
-	log(auth_bs);
+	log("Serial: %s", auth_bs);
 	bsSend.Write((BYTE) AuthBSLen);
 	bsSend.Write(auth_bs, AuthBSLen);
 	
@@ -307,15 +303,4 @@ void CNetGame::Packet_ConnectionSucceeded(Packet *p)
 	bsSend.Write(szClientVer, iClientVerLen);
 
 	SEND_RPC(m_rakClientInterface, ClientJoin, bsSend);
-	
-	m_isInGame = true;
-	
-	DoSync();
-	lastOnFootSyncTick = GetTickCount();
 }
-
-
-
-
-
-

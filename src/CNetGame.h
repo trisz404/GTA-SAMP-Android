@@ -35,8 +35,9 @@ public:
 			m_SingletonInstance = new CNetGame();
 		}
 		return m_SingletonInstance;
-	}	
-private:
+	}
+	
+//private:
 	static CNetGame*		m_SingletonInstance;
 	RakClientInterface* 	m_rakClientInterface;
 	CPlayerPool*			m_PlayerPool;

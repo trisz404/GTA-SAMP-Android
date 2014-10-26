@@ -97,7 +97,7 @@ void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 	);*/
 	
 	// The ReadNormQuat crash the game. :S 
-	l_BitStream.IgnoreBits(4 + 3 * 4 * 8);
+	l_BitStream.IgnoreBits(4 * 1 + 3 * 4 * 8);
 	
 	l_BitStream.Read(l_ucCompressedHealthAndArmour);
 	
@@ -186,15 +186,3 @@ void CPlayer::WorldRemove()
 {
 
 }
-
-
-
-
-
-
-
-
-
-
-
-

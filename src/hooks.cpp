@@ -13,6 +13,8 @@ int CRunningScript__Process_hook(void* p)
 	
 	if(l_bProcessed == false)
 	{
+		l_bProcessed = true;
+		
 		CNetGame* 	l_pNetGame = CNetGame::Instance();
 		CPlayerPed*	l_pLocalPlayer;
 	
@@ -20,14 +22,10 @@ int CRunningScript__Process_hook(void* p)
 		
 		if(l_pLocalPlayer)
 		{
-			l_pLocalPlayer->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
+			l_pLocalPlayer->Teleport(CVector(0.0f, 0.0f, 3.0f), 0);
 		}
-	
-	
-		
-		
-		l_bProcessed = true;
 	}
+	
 	return 0;
 }
 
@@ -87,12 +85,12 @@ void RenderSAMP()
 		PrintLine("pos: X: %.1f Y: %.1f Z: %.1f", ped->m_pMatrix->m_RwMatrix.pos.x, ped->m_pMatrix->m_RwMatrix.pos.y, ped->m_pMatrix->m_RwMatrix.pos.z);
 	}
 	
-	CPlayer * player = CNetGame::Instance()->getPlayerPool()->GetPlayer(1);
-	if (player)
-	{
-		PrintLine("");
-		PrintLine("X: %.1f Y: %.1f Z: %.1f", player->m_onFootSyncData.position.x, player->m_onFootSyncData.position.y, player->m_onFootSyncData.position.z);
-	}
+	// CPlayer * player = CNetGame::Instance()->getPlayerPool()->GetPlayer(1);
+	// if (player)
+	// {
+		// PrintLine("");
+		// PrintLine("X: %.1f Y: %.1f Z: %.1f", player->m_onFootSyncData.position.x, player->m_onFootSyncData.position.y, player->m_onFootSyncData.position.z);
+	// }
 	
 	PrintLine("");
 	PrintLine("Tick: %i, lastOnFootSyncTick: %i", GetTickCount(), lastOnFootSyncTick);

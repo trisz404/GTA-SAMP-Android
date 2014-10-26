@@ -25,7 +25,6 @@ CPlayerPed* CLocalPlayer::CreateGTAPlayer()
 	CWorld::PlayerInFocus = 0;
 	CPlayerPed::SetupPlayerPed(CWorld::PlayerInFocus);
 	
-	
 	m_GTAPlayerPed = FindPlayerPed(-1);
 	CClothes::RebuildPlayer(m_GTAPlayerPed, false);
 	return m_GTAPlayerPed;

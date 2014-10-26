@@ -3,7 +3,7 @@ CC = $(TOOLCHAIN_PREFIX)gcc
 CXX = $(TOOLCHAIN_PREFIX)g++
 STRIP = $(TOOLCHAIN_PREFIX)strip
 
-CFLAGS = -shared -g -Wall -Ofast -pipe -D_THREAD_SAFE -DNDEBUG -std=c++11 -ffunction-sections -fdata-sections -Wl,--gc-sections
+CFLAGS = -shared -g -Wall -pipe -D_THREAD_SAFE -DNDEBUG -std=c++11 -ffunction-sections -fdata-sections -Wl,--gc-sections
 CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 CFLAGS += -w
 CFLAGS += -Wl,-z,defs
@@ -61,9 +61,6 @@ init:
 	@if not exist $(OBJDIR)\$(RNDIR) mkdir $(OBJDIR)\$(RNDIR)
 	@if not exist $(OBJDIR)\$(RNDIR)\SAMP mkdir $(OBJDIR)\$(RNDIR)\SAMP
 	@if exist $(TARGET) del $(TARGET)
-
-%.cpp:
-	@echo $@
 
 $(OBJDIR)/$(SRCDIR)/%.o: $(SRCDIR)/%.cpp
 	@echo compile $(@:$(OBJDIR)/%.o=%.cpp)
