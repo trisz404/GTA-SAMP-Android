@@ -77,9 +77,7 @@ void InitGame(RPCParameters *rpcParams)
 	
 	_PlayerID MyPlayerID;
 	bsInitGame.Read(MyPlayerID);
-	
-	l_pNetGame->getPlayerPool()->setLocalPlayerID(MyPlayerID);
-	
+		
 	bsInitGame.ReadCompressed(m_bShowPlayerTags);
 	bsInitGame.Read(m_iShowPlayerMarkers);
 	bsInitGame.Read(m_byteWorldTime);
@@ -114,12 +112,15 @@ void InitGame(RPCParameters *rpcParams)
 
 	char byteVehicleModels[212];
 	bsInitGame.Read(byteVehicleModels, 212);
-
+	
+	l_pNetGame->getPlayerPool()->setLocalPlayerID(MyPlayerID);	
+	
 	log("Connected to %.64s", g_szHostName);
 }
 
 void WorldPlayerAdd(RPCParameters *rpcParams)
 {
+	CNetGame::Instance()->getPlayerPool()->StreamPlayerIn(rpcParams);
 	log("WorldPlayerAdd called!");
 }
 

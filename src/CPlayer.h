@@ -6,6 +6,8 @@
 #include <GTASA.h>
 #include <RakClient.h>
 
+#define MAX_SKILL_LEVEL	11
+
 
 typedef struct QuaternionVector_t
 {
@@ -41,11 +43,26 @@ public:
 	
 	void ProcessPlayerSync(Packet* a_pPacket);
 	
+	void StreamIn(RPCParameters *rpcParams);
+	void StreamOut();
+	
+	void WorldAdd();
+	void WorldRemove();
+	
 private:
 
 	ON_FOOT_SYNC_t	m_onFootSyncData;
 	char*			m_pszNickName;
 	bool			m_bIsNPC;
+	bool			m_bIsStreamed;
+	
+	uint32_t		m_uiNickColor;	
+	uint8_t			m_iTeamID;
+	int				m_iSkinID;
+	uint8_t			m_iFightingStyle;
+	uint16_t		m_iSkillLevel[MAX_SKILL_LEVEL];
+	float			m_fFacingAngle;
+	
 };
 
 

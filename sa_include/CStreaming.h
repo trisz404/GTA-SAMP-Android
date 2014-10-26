@@ -6,7 +6,7 @@ class CStreaming
 public:
 	static int RequestSpecialModel(int, const char*, int);
 	static int LoadAllRequestedModels(bool);
-
+	static int RequestModel(int, int);
 };
 
 #endif

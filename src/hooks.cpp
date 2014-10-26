@@ -11,31 +11,10 @@ int CRunningScript__Process(void* p)
 	static bool l_bProcessed =	false;
 	
 	if(l_bProcessed == false)
-	{
-		CStreaming::RequestSpecialModel(0, "player", 26);
-		CStreaming::LoadAllRequestedModels(true);	
-
-		CPlayerPed::SetupPlayerPed(0);
-		CClothes::RebuildPlayer(CWorld::Players[0], false);
+	{		
+		l_pNetGame->getPlayerPool()->GetLocalPlayer()->CreateGTAPlayer();
 		
-		if(CWorld::Players[0])
-		{
-			log("CRunningScript__Process() -> Teleporting player !");			
-			CWorld::Players[0]->Teleport(CVector(0.0f, 0.0f, 3.0f), 0);
-			
-			CObject* l_pObject = CObject::Create(3578, false);
-			
-			if(l_pObject)
-			{
-				log("Teleporting object");
-				l_pObject->Teleport(CVector(10.0, 10.0, 3.0), 0);
-			}			
-		}
-		else
-		{
-			log("CRunningScript__Process() -> Teleporting player failed, nullptr!");
-		}	
-	
+		
 		l_bProcessed = true;
 	}
 	return 0;

@@ -9,6 +9,7 @@ CPlayerPool::CPlayerPool()
 	}
 	
 	m_LocalPlayerID = -1;
+	m_LocalPlayer		= new CLocalPlayer();
 }
 
 CPlayerPool::~CPlayerPool()
@@ -20,6 +21,11 @@ CPlayerPool::~CPlayerPool()
 			delete m_Players[i];
 			m_Players[i] = 0;		
 		}
+	}
+	
+	if(m_LocalPlayer)
+	{
+		delete m_LocalPlayer;
 	}
 }
 
@@ -52,6 +58,20 @@ bool CPlayerPool::Delete(_PlayerID a_PlayerID)
 	return true;
 }
 
+CPlayer* CPlayerPool::GetPlayer(_PlayerID a_PlayerID)
+{
+	if(isPlayerConnected(a_PlayerID))
+	{
+		return m_Players[a_PlayerID];
+	}
+	return 0;
+}
+
+CLocalPlayer* CPlayerPool::GetLocalPlayer()
+{
+	return m_LocalPlayer;
+}
+
 bool CPlayerPool::isPlayerConnected(_PlayerID a_PlayerID)
 {
 	if(a_PlayerID >= 0 && a_PlayerID < MAX_PLAYERS)
@@ -80,6 +100,20 @@ void CPlayerPool::ProcessPlayerSync(Packet* a_pPacket)
 	if(isPlayerConnected(l_PlayerID))
 	{
 		m_Players[l_PlayerID]->ProcessPlayerSync(a_pPacket);
+	}
+}
+
+
+void CPlayerPool::StreamPlayerIn(RPCParameters *rpcParams)
+{
+	RakNet::BitStream l_BitStream(rpcParams->input, rpcParams->numberOfBitsOfData / 8 + 1, false);
+	_PlayerID 	l_PlayerID;
+	
+	l_BitStream.Read(l_PlayerID);
+	
+	if(isPlayerConnected(l_PlayerID))
+	{
+		m_Players[l_PlayerID]->StreamIn(rpcParams);
 	}
 }
 

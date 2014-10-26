@@ -1,10 +1,12 @@
 #include "CPlayer.h"
 #include <string.h>
 
+
 CPlayer::CPlayer()
 {
 	m_pszNickName 	= 0;
 	m_bIsNPC		= false;
+	m_bIsStreamed	= false;
 }
 
 CPlayer::~CPlayer()
@@ -39,7 +41,7 @@ void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 	unsigned char		l_ucCompressedHealthAndArmour;
 	
 	l_BitStream.IgnoreBits(8); // PacketID
-	l_BitStream.IgnoreBits(sizeof(_PlayerID) * 2); // PlayerID
+	l_BitStream.IgnoreBits(sizeof(_PlayerID) * 8); // PlayerID
 	
 
 	// Left & Right Keys on foot
@@ -105,14 +107,58 @@ void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 	}	
 }
 
+void CPlayer::StreamIn(RPCParameters *rpcParams)
+{
+	int i;
+	RakNet::BitStream 	l_BitStream(rpcParams->input, rpcParams->numberOfBitsOfData / 8 + 1, false);
 
+	l_BitStream.IgnoreBits(sizeof(_PlayerID) * 8); // PlayerID
+	
+	/* Team ID */
+	l_BitStream.Read(m_iTeamID);
+	/* Skin ID*/
+	l_BitStream.Read(m_iSkinID);
+	
+	/* Position */
+	l_BitStream.Read(m_onFootSyncData.position.x);
+	l_BitStream.Read(m_onFootSyncData.position.y);
+	l_BitStream.Read(m_onFootSyncData.position.z);
+	
+	/* Facing angle */
+	l_BitStream.Read(m_fFacingAngle);
+	
+	/* NickName color */
+	l_BitStream.Read(m_uiNickColor);
+	
+	/* Fighting Style */
+	l_BitStream.Read(m_iFightingStyle);
+	
+	/* Skill Levels */
+	for(i = 0; i < MAX_SKILL_LEVEL; i++)
+	{
+		l_BitStream.Read(m_iSkillLevel[i]);
+	}
+	
 
+	m_bIsStreamed = true;
+	WorldAdd();
+}
 
+void CPlayer::StreamOut()
+{
+	m_bIsStreamed = false;
+	WorldRemove();
+}
 
+void CPlayer::WorldAdd()
+{
 
+}
 
+void CPlayer::WorldRemove()
+{
 
-
+}
 
 
 
