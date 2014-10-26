@@ -26,6 +26,7 @@ public:
 	RakClientInterface* getRakInterface();
 	CPlayerPool*		getPlayerPool();
 	
+	void DoSync();
 	
 	static CNetGame* Instance()
 	{
@@ -39,10 +40,7 @@ private:
 	static CNetGame*		m_SingletonInstance;
 	RakClientInterface* 	m_rakClientInterface;
 	CPlayerPool*			m_PlayerPool;
+	bool					m_isInGame = false;
 };
-
-
-
-
 
 #endif

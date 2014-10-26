@@ -40,6 +40,8 @@ void ServerQuit(RPCParameters *rpcParams)
 	log("ServerQuit called!");
 }
 
+int g_iNetModeNormalOnfootSendRate;
+
 void InitGame(RPCParameters *rpcParams)
 {
 	int iBitLength = rpcParams->numberOfBitsOfData;
@@ -88,8 +90,7 @@ void InitGame(RPCParameters *rpcParams)
 	bsInitGame.ReadCompressed(m_bInstagib); // 
 
 	// Server's send rate restrictions
-	int iNetModeNormalOnfootSendRate;
-	bsInitGame.Read(iNetModeNormalOnfootSendRate);
+	bsInitGame.Read(g_iNetModeNormalOnfootSendRate);
 	int iNetModeNormalIncarSendRate;
 	bsInitGame.Read(iNetModeNormalIncarSendRate);
 	int iNetModeFiringSendRate;

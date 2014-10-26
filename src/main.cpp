@@ -31,22 +31,19 @@ int log(const char *format, ...)
 #define _byteswap_ulong(x) __builtin_bswap32(x)
 #define _byteswap_uint64(x) __builtin_bswap64(x)
 
-void *wantedthread(void* punused)
+void *networkthread(void* punused)
 {
     while(gGameState != 9)
 		sleep(1); 
 	
     log("Game loaded!");
-
-    ToggleDebugFPS();
 	
-	CNetGame* l_pNetGame = CNetGame::Instance();
-	l_pNetGame->DbgConnect();	
+	CNetGame::Instance()->DbgConnect();	
 	
 	while (true)
 	{
-		l_pNetGame->Process();
-	}	
+		CNetGame::Instance()->Process();
+	}
 	return 0;
 }
 
@@ -54,10 +51,9 @@ void inithack()
 {
     log("Starting thread...");
     pthread_t thread;
-    pthread_create(&thread, NULL, wantedthread, 0);
+    pthread_create(&thread, NULL, networkthread, 0);
 
 	InitHooks();
-	
 }
 
 extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved);

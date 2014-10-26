@@ -1,7 +1,8 @@
+#include <thread>
+
 #include "CNetGame.h"
 #include "RPC.h"
 #include "AuthTable.h"
-
 
 CNetGame* CNetGame::m_SingletonInstance = 0;
 
@@ -31,9 +32,21 @@ CNetGame::~CNetGame()
 
 void CNetGame::DbgConnect()
 {
-	//m_rakClientInterface->Connect("192.168.1.246", 7777, 0, 0, 0); // Balika
-	m_rakClientInterface->Connect("192.168.0.35", 7777, 0, 0, 0); // Sasuke
+	m_rakClientInterface->Connect("192.168.1.246", 7777, 0, 0, 0); // Balika
+	// m_rakClientInterface->Connect("192.168.0.35", 7777, 0, 0, 0); // Sasuke
 }
+
+unsigned int GetTickCount()
+{
+	struct timeval tv;
+	if(gettimeofday(&tv, NULL) != 0)
+		return 0;
+
+	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+}
+
+unsigned int lastOnFootSyncTick = 0;
+extern int g_iNetModeNormalOnfootSendRate;
 
 void CNetGame::Process()
 {
@@ -43,7 +56,7 @@ void CNetGame::Process()
 		int packetId = pPacket->data[0];
 		log("Packet received -> %d\n", packetId);
 		
-		switch(packetId) 
+		switch(packetId)
 		{
 			case ID_DISCONNECTION_NOTIFICATION: log("Disconnect notification recived!"); break;
 			case ID_CONNECTION_LOST: log("Connection lost!"); break;
@@ -51,10 +64,17 @@ void CNetGame::Process()
 			case ID_CONNECTION_ATTEMPT_FAILED: log("Failed to connect!"); break;
 			case ID_CONNECTION_REQUEST_ACCEPTED: log("Request accepted!"); Packet_ConnectionSucceeded(pPacket); break;
 			case ID_AUTH_KEY: log("Auth key!"); Packet_AUTH_KEY(pPacket); break;
-			case ID_PLAYER_SYNC: m_PlayerPool->ProcessPlayerSync(pPacket); break;
+			case ID_PLAYER_SYNC: log("PlayerSync packet!"); m_PlayerPool->ProcessPlayerSync(pPacket); break;
 		}
 	
 		m_rakClientInterface->DeallocatePacket(pPacket);	
+	}
+	
+	if (m_isInGame && g_iNetModeNormalOnfootSendRate > 0 && lastOnFootSyncTick < (GetTickCount() - g_iNetModeNormalOnfootSendRate * 20))
+	{
+		DoSync();
+		
+		lastOnFootSyncTick = GetTickCount();
 	}
 }
 
@@ -148,6 +168,87 @@ void gen_random(char *s, const int len)
 	s[len] = 0;
 }
 
+void RwMatrixToQuaternion(RwMatrix matrix, tQuaternionVector& qrot)
+{
+#define m00 matrix.right.x
+#define m01 matrix.right.y
+#define m02 matrix.right.z
+
+#define m10 matrix.up.x
+#define m11 matrix.up.y
+#define m12 matrix.up.z
+
+#define m20 matrix.at.x
+#define m21 matrix.at.y
+#define m22 matrix.at.z
+
+	float sum;
+	
+	sum = 1 + m00 + m11 + m22;
+	if (sum < 0.0f)
+		sum = 0.0f;
+	float qw = sqrt(sum) / 2.0f;
+	
+	sum = 1 + m00 - m11 - m22;
+	if (sum < 0.0f)
+		sum = 0.0f;
+	float qx = sqrt(sum) / 2.0f;
+
+	sum = 1 - m00 + m11 - m22;
+	if (sum < 0.0f)
+		sum = 0.0f;
+	float qy = sqrt(sum) / 2.0f;
+
+	sum = 1 - m00 - m11 + m22;
+	if (sum < 0.0f)
+		sum = 0.0f;
+	float qz = sqrt(sum) / 2.0f;
+
+	if (qw < 0.0)
+		qw = 0.0;
+
+	if (qx < 0.0)
+		qx = 0.0;
+
+	if (qy < 0.0)
+		qy = 0.0;
+
+	if (qz < 0.0)
+		qz = 0.0;
+
+	qx = copysign(qx, m21 - m12);
+	qy = copysign(qy, m02 - m20);
+	qz = copysign(qz, m10 - m01);
+	
+	qrot.W = 1.0f;
+	qrot.X = 1.0f;
+	qrot.Y = 1.0f;
+	qrot.Z = 1.0f;
+}
+
+void CNetGame::DoSync()
+{
+	CPlayerPed* ped = FindPlayerPed(-1);
+	if(ped && ped->m_pMatrix)
+	{
+		ON_FOOT_SYNC_t syncData;
+		memset(&syncData, 0, sizeof(ON_FOOT_SYNC_t));
+		
+		syncData.health = 100;
+		
+		RwMatrixToQuaternion(ped->m_pMatrix->m_RwMatrix, syncData.quaterRotation);
+		
+		syncData.position.x = ped->m_pMatrix->m_RwMatrix.pos.x;
+		syncData.position.y = ped->m_pMatrix->m_RwMatrix.pos.y;
+		syncData.position.z = ped->m_pMatrix->m_RwMatrix.pos.z;
+		
+		RakNet::BitStream bsPlayerSync;
+		bsPlayerSync.Write((BYTE) ID_PLAYER_SYNC);
+		bsPlayerSync.Write((char *) &syncData, sizeof(ON_FOOT_SYNC_t));
+		m_rakClientInterface->Send(&bsPlayerSync, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0);
+	}
+}
+
 void CNetGame::Packet_ConnectionSucceeded(Packet *p)
 {
 	RakNet::BitStream bsSuccAuth((unsigned char *)p->data, p->length, false);
@@ -200,6 +301,11 @@ void CNetGame::Packet_ConnectionSucceeded(Packet *p)
 	bsSend.Write(szClientVer, iClientVerLen);
 
 	SEND_RPC(m_rakClientInterface, ClientJoin, bsSend);
+	
+	m_isInGame = true;
+	
+	DoSync();
+	lastOnFootSyncTick = GetTickCount();
 }
 
 

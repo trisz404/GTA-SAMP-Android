@@ -27,7 +27,7 @@ public:
 	void ProcessPlayerSync(Packet* a_pPacket);
 	
 	void StreamPlayerIn(RPCParameters *rpcParams);
-	
+
 private:
 	CLocalPlayer*	m_LocalPlayer;
 	CPlayer*		m_Players[MAX_PLAYERS];

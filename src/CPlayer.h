@@ -48,15 +48,12 @@ public:
 	
 	void WorldAdd();
 	void WorldRemove();
-	
 
-
+	CPlayerPed* 	m_pPed = nullptr;
 	ON_FOOT_SYNC_t	m_onFootSyncData;
-private:
 	char*			m_pszNickName;
-	bool			m_bIsNPC;
 	bool			m_bIsStreamed;
-	
+	bool m_bIsNPC = false;;	
 	uint32_t		m_uiNickColor;	
 	uint8_t			m_iTeamID;
 	int				m_iSkinID;
