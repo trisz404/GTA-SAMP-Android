@@ -22,7 +22,7 @@ public:
 	
 	void ProcessPlayerSync(Packet* a_pPacket);
 	
-	
+	CPlayer* GetPlayer(int id) { return m_Players[id]; }
 private:
 	CPlayer*		m_Players[MAX_PLAYERS];
 	_PlayerID		m_LocalPlayerID;

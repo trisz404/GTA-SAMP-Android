@@ -41,11 +41,11 @@ public:
 	
 	void ProcessPlayerSync(Packet* a_pPacket);
 	
-private:
-
+//private:
+	CPlayerPed*		m_pPed = nullptr;
 	ON_FOOT_SYNC_t	m_onFootSyncData;
-	char*			m_pszNickName;
-	bool			m_bIsNPC;
+	char*			m_pszNickName = nullptr;
+	bool			m_bIsNPC = false;;
 };
 
 

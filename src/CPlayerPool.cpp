@@ -33,18 +33,18 @@ bool CPlayerPool::New(_PlayerID a_PlayerID, char* a_szNickName, bool a_bIsNPC)
 	
 	if(l_pPlayer)
 	{
-		m_Players[a_PlayerID] = l_pPlayer;	
-		
 		l_pPlayer->setNickName(a_szNickName);
 		l_pPlayer->setNPC(a_bIsNPC);
 		
-	}	
+		m_Players[a_PlayerID] = l_pPlayer;
+	}
+	
 	return true;
 }
 
 bool CPlayerPool::Delete(_PlayerID a_PlayerID)
 {
-	if(isPlayerConnected(a_PlayerID) == false || a_PlayerID == m_LocalPlayerID) return false;
+	if(!isPlayerConnected(a_PlayerID) || a_PlayerID == m_LocalPlayerID) return false;
 	
 	
 	delete m_Players[a_PlayerID];
@@ -67,20 +67,20 @@ void CPlayerPool::setLocalPlayerID(_PlayerID a_PlayerID)
 	m_LocalPlayerID = a_PlayerID;
 }
 
+int log(const char *format, ...);
 
 void CPlayerPool::ProcessPlayerSync(Packet* a_pPacket)
 {
 	RakNet::BitStream l_BitStream(a_pPacket->data, a_pPacket->length, false);
 	_PlayerID 	l_PlayerID;
 	
-	
 	l_BitStream.IgnoreBits(8); // PacketID
 	l_BitStream.Read(l_PlayerID);
+	
+	log("Sync for: %i", l_PlayerID);
 	
 	if(isPlayerConnected(l_PlayerID))
 	{
 		m_Players[l_PlayerID]->ProcessPlayerSync(a_pPacket);
 	}
 }
-
-
