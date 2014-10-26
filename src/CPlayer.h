@@ -6,6 +6,8 @@
 #include <GTASA.h>
 #include <RakClient.h>
 
+#define MAX_SKILL_LEVEL 11
+
 typedef struct ON_FOOT_SYNC_t // size 0x44
 {
 #pragma pack( 1 )
