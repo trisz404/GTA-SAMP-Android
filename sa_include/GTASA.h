@@ -3,6 +3,7 @@
 
 #include <rwcore.h>
 
+#include "CCivilianPed.h"
 #include "CClothes.h"
 #include "CCredits.h"
 #include "CEntity.h"

@@ -1,23 +1,55 @@
 #include "CPlayer.h"
 #include <string.h>
 
+int log(const char *format, ...);
 
 CPlayer::CPlayer()
 {
+	int i;
+	/*
 	m_pPed = new CPlayerPed(1, true);
 	*(unsigned int*)((char *) (m_pPed) + 1432) = 2;
 	
 	CWorld::Add(m_pPed);
 	
-	m_pPed->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
-	m_bIsStreamed	= false;
+	m_pPed->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);*/
+	
+	CStreaming::RequestSpecialModel(0, "player", 26);
+	CStreaming::LoadAllRequestedModels(true);	
+	
+	log("Creating CPed ...");
+	CPed* l_pPed = new CPed(0);
+	log("CPed created -> 0x%08X", l_pPed);
+	l_pPed->SetModelIndex(0);
+	l_pPed->SetPedState(PED_IDLE);
+	
+	//l_pPed->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
+	
+	//CWorld:Add(l_pPed);
+	
+	m_bIsStreamed		= false;
+	m_pszNickName		= 0;
+	m_bIsNPC			= false;	
+	m_uiNickColor		= 0;	
+	m_iTeamID			= -1;
+	m_iSkinID			= 0;
+	m_iFightingStyle	= 0;
+	
+	for(i = 0; i < MAX_SKILL_LEVEL; i++)
+	{	
+		m_iSkillLevel[i] = 0;
+	}
+	m_fFacingAngle		= 0.0f;
+	
+	
+	
 }
 
 CPlayer::~CPlayer()
 {
 	if(m_pPed)
 	{
-		CWorld::Remove(m_pPed);
+		// CWorld::Remove(m_pPed);
 		// delete m_pPed;
 	}
 }

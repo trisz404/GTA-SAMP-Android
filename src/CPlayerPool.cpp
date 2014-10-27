@@ -1,6 +1,8 @@
 #include "CPlayerPool.h"
 
 
+int log(const char *format, ...);
+
 CPlayerPool::CPlayerPool()
 {
 	for(int i = 0; i < MAX_PLAYERS; i++)
@@ -43,9 +45,10 @@ bool CPlayerPool::New(_PlayerID a_PlayerID, char* a_szNickName, bool a_bIsNPC)
 		l_pPlayer->setNPC(a_bIsNPC);
 		
 		m_Players[a_PlayerID] = l_pPlayer;
+		return true;
 	}
 	
-	return true;
+	return false;
 }
 
 bool CPlayerPool::Delete(_PlayerID a_PlayerID)

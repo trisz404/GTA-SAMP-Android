@@ -124,6 +124,8 @@ public:
 	void ClearLookFlag();
 	void SetPedState(ePedState);
 	void SetMoveState(eMoveState);
+	
+	void* operator new(unsigned int);
 };
 
 #endif

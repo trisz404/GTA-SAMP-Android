@@ -61,6 +61,9 @@ void InitGame(RPCParameters *rpcParams)
 	int m_iDeathDropMoney;
 	bool m_bInstagib;
 	CNetGame* l_pNetGame;
+
+	log("InitGame() -> Called");
+
 	
 	l_pNetGame = CNetGame::Instance();
 	

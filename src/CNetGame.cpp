@@ -30,8 +30,8 @@ CNetGame::~CNetGame()
 
 void CNetGame::DbgConnect()
 {
-	m_rakClientInterface->Connect("192.168.1.246", 7777, 0, 0, 0); // Balika
-	// m_rakClientInterface->Connect("192.168.0.35", 7777, 0, 0, 0); // Sasuke
+	//m_rakClientInterface->Connect("192.168.1.246", 7777, 0, 0, 0); // Balika
+	m_rakClientInterface->Connect("192.168.0.35", 7777, 0, 0, 0); // Sasuke
 }
 
 unsigned int GetTickCount()
@@ -117,12 +117,13 @@ void CNetGame::Packet_AUTH_KEY(Packet *p)
 #include <ttmathuint_x86.h>
 #include <stdlib.h>
 
+
 bool GenerateSerial(char* input, char** output, int* output_len, int key)
 {
 	ttmath::UInt<100> math;
 	unsigned char sha_hash_bin[20];
 	char sha_hash[41];
-	std::string result;
+	std::string result = "";
 
 	/* Hash the input with SHA-1 */
 	
@@ -134,20 +135,25 @@ bool GenerateSerial(char* input, char** output, int* output_len, int key)
 	sha_hash[0] = '\0';
 	for (int i = 0; i < sizeof(sha_hash_bin); ++i)
 		sprintf(sha_hash, "%s%02X", sha_hash, sha_hash_bin[i]);
-	sha_hash[sizeof(sha_hash)] = '\0';
+	sha_hash[sizeof(sha_hash)-1] = '\0';
 
-	log(sha_hash);
+	log("GenerateSerial() -> %s", sha_hash);
 
 	/* Encrypt the hash with ttmath */
-
+	log("GenerateSerial() -> Step 1");
 	math.FromString(sha_hash, 16);
+	log("GenerateSerial() -> Step 2");
 	math.SerialEncrypt(key);
-	result = math.ToString(16);
-
+	log("GenerateSerial() -> Step 3");
+	math.ToString(result, 16);			// Crashy here
+	log("GenerateSerial() -> Step 4");
+	
 	*output_len = result.length();
+	log("GenerateSerial() -> Step 5");
 	*output = new char[*output_len+1];
-
+	log("GenerateSerial() -> Step 6");
 	strcpy(*output, result.c_str());
+	log("GenerateSerial() -> Step 7, all is ok");
 	return true;
 }
 
@@ -228,7 +234,8 @@ float* RwMatrixToQuaternion(RwMatrix matrix)
 
 void CNetGame::DoSync()
 {
-	CPlayerPed* ped = FindPlayerPed(-1);
+	CPlayerPed* ped = getPlayerPool()->GetLocalPlayer()->GetGTAPlayer();
+	return;
 	if(ped && ped->m_pMatrix)
 	{
 		ON_FOOT_SYNC_t syncData;
@@ -236,9 +243,10 @@ void CNetGame::DoSync()
 		
 		syncData.health = 100;
 		
-		float* asd = RwMatrixToQuaternion(ped->m_pMatrix->m_RwMatrix);
+		/*float* asd = RwMatrixToQuaternion(ped->m_pMatrix->m_RwMatrix);
 		memcpy(syncData.quaterRotation, asd, 4 * sizeof(float));
 		delete [] asd;
+		*/
 		
 		syncData.position.x = ped->m_pMatrix->m_RwMatrix.pos.x;
 		syncData.position.y = ped->m_pMatrix->m_RwMatrix.pos.y;
@@ -302,5 +310,7 @@ void CNetGame::Packet_ConnectionSucceeded(Packet *p)
 	bsSend.Write(iClientVerLen);
 	bsSend.Write(szClientVer, iClientVerLen);
 
+
 	SEND_RPC(m_rakClientInterface, ClientJoin, bsSend);
+	delete[] auth_bs;	
 }

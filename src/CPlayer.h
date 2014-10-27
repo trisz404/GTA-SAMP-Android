@@ -47,7 +47,7 @@ public:
 	ON_FOOT_SYNC_t	m_onFootSyncData;
 	char*			m_pszNickName;
 	bool			m_bIsStreamed;
-	bool m_bIsNPC = false;;	
+	bool 			m_bIsNPC;	
 	uint32_t		m_uiNickColor;	
 	uint8_t			m_iTeamID;
 	int				m_iSkinID;
