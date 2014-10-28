@@ -1,11 +1,7 @@
 #include <errno.h>
 #include <GTASA.h>
 #include "CNetGame.h"
-
-int log(const char *format, ...);
-unsigned int GetBaseAddress();
-void ARMJMP(void* from, void* to);
-void ARMBIGJMP(void* to, void* form);
+#include "utils.h"
 
 int CRunningScript__Process_hook(void* p)
 {
@@ -16,15 +12,17 @@ int CRunningScript__Process_hook(void* p)
 		l_bProcessed = true;
 		
 		CNetGame* 	l_pNetGame = CNetGame::Instance();
-		CPlayerPed*	l_pLocalPlayer;
-	
-		l_pLocalPlayer = l_pNetGame->getPlayerPool()->GetLocalPlayer()->CreateGTAPlayer();
+		CPlayerPed*	l_pLocalPlayer = l_pNetGame->getPlayerPool()->GetLocalPlayer()->CreateGTAPlayer();
 		
 		if(l_pLocalPlayer)
 		{
 			l_pLocalPlayer->Teleport(CVector(0.0f, 0.0f, 3.0f), 0);
 		}
+		
+		CNetGame::Instance()->DbgConnect();	
 	}
+	
+	CNetGame::Instance()->Process();
 	
 	return 0;
 }

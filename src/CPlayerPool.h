@@ -10,8 +10,12 @@
 
 class CPlayerPool
 {
+private:
+	CLocalPlayer*	m_LocalPlayer = nullptr;
+	CPlayer*		m_Players[MAX_PLAYERS] = { 0 };
+	_PlayerID		m_LocalPlayerID = -1;
+	
 public:
-
 	CPlayerPool();
 	~CPlayerPool();
 
@@ -27,13 +31,6 @@ public:
 	void ProcessPlayerSync(Packet* a_pPacket);
 	
 	void StreamPlayerIn(RPCParameters *rpcParams);
-
-private:
-	CLocalPlayer*	m_LocalPlayer;
-	CPlayer*		m_Players[MAX_PLAYERS];
-	_PlayerID		m_LocalPlayerID;
-
-
 };
 
 

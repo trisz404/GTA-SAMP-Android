@@ -1,7 +1,27 @@
-#include <dlfcn.h>
+//#include <dlfcn.h>
 #include <sys/mman.h>
-#include <errno.h>
 #include <string.h>
+#include <stdio.h>
+#include <android/log.h>
+
+int log(const char *format, ...)
+{
+   va_list arg;
+   int done;
+
+   va_start (arg, format);
+
+   char buf[2048];
+   done = vsprintf (buf, format, arg);
+
+   __android_log_write(ANDROID_LOG_INFO, "SA_HACK_LOG", buf);
+
+   //TODO: Save it to file or something...
+   
+   va_end (arg);
+
+   return done;
+}
 
 int memcpy_protect(void* to, void* from, int len)
 {	

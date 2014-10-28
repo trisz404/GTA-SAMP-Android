@@ -1,10 +1,8 @@
 #include "CLocalPlayer.h"
 
-
-
 CLocalPlayer::CLocalPlayer()
 {
-	m_GTAPlayerPed		= 0;
+	
 }
 
 CLocalPlayer::~CLocalPlayer()
@@ -12,7 +10,7 @@ CLocalPlayer::~CLocalPlayer()
 	if(m_GTAPlayerPed)
 	{
 		/*TODO: Remove the PlayerPed */ 
-		m_GTAPlayerPed = 0;
+		m_GTAPlayerPed = nullptr;
 	}
 }
 

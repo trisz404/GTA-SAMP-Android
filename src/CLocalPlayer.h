@@ -6,18 +6,15 @@
 
 class CLocalPlayer
 {
+private:
+	CPlayerPed*		m_GTAPlayerPed = nullptr;
+	
 public:
-
 	CLocalPlayer();
 	~CLocalPlayer();
 
 	CPlayerPed*			CreateGTAPlayer();
 	CPlayerPed* 		GetGTAPlayer();
-
-private:
-
-	CPlayerPed*		m_GTAPlayerPed;
-
 };
 
 

@@ -10,8 +10,13 @@
 
 class CNetGame
 {
+/*private*/public: //TODO!!!
+	static CNetGame*		m_SingletonInstance;
+	RakClientInterface* 	m_rakClientInterface = nullptr;
+	CPlayerPool*			m_PlayerPool = nullptr;
+	bool					m_isInGame = false;
+	
 public:
-
 	CNetGame();
 	~CNetGame();
 
@@ -22,7 +27,6 @@ public:
 	void Packet_AUTH_KEY(Packet *p);
 	void Packet_ConnectionSucceeded(Packet *p);
 	
-	
 	RakClientInterface* getRakInterface();
 	CPlayerPool*		getPlayerPool();
 	
@@ -30,18 +34,12 @@ public:
 	
 	static CNetGame* Instance()
 	{
-		if(m_SingletonInstance == 0)
+		if(m_SingletonInstance == nullptr)
 		{
 			m_SingletonInstance = new CNetGame();
 		}
 		return m_SingletonInstance;
 	}
-	
-//private:
-	static CNetGame*		m_SingletonInstance;
-	RakClientInterface* 	m_rakClientInterface;
-	CPlayerPool*			m_PlayerPool;
-	bool					m_isInGame = false;
 };
 
 #endif

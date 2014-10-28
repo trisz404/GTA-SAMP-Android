@@ -1,48 +1,27 @@
 #include "CPlayer.h"
 #include <string.h>
-
-int log(const char *format, ...);
+#include "utils.h"
 
 CPlayer::CPlayer()
 {
-	int i;
 	/*
 	m_pPed = new CPlayerPed(1, true);
-	*(unsigned int*)((char *) (m_pPed) + 1432) = 2;
-	
-	CWorld::Add(m_pPed);
-	
-	m_pPed->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);*/
+	*(unsigned int*)((char *) (m_pPed) + 1432) = 2; //Set type to network player
+	*/
 	
 	CStreaming::RequestSpecialModel(0, "player", 26);
 	CStreaming::LoadAllRequestedModels(true);	
 	
 	log("Creating CPed ...");
-	CPed* l_pPed = new CPed(0);
-	log("CPed created -> 0x%08X", l_pPed);
-	l_pPed->SetModelIndex(0);
-	l_pPed->SetPedState(PED_IDLE);
+	m_pPed = new CPed(2);
+	log("CPed created -> 0x%08X", m_pPed);
+	m_pPed->SetModelIndex(0);
+	m_pPed->SetPedState(PED_IDLE);
+	// How can we disable the AI?
 	
-	//l_pPed->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
-	
-	//CWorld:Add(l_pPed);
-	
-	m_bIsStreamed		= false;
-	m_pszNickName		= 0;
-	m_bIsNPC			= false;	
-	m_uiNickColor		= 0;	
-	m_iTeamID			= -1;
-	m_iSkinID			= 0;
-	m_iFightingStyle	= 0;
-	
-	for(i = 0; i < MAX_SKILL_LEVEL; i++)
-	{	
-		m_iSkillLevel[i] = 0;
-	}
-	m_fFacingAngle		= 0.0f;
-	
-	
-	
+	// DEBUG PLAYER SPAWN...
+	CWorld::Add(m_pPed);
+	m_pPed->Teleport(CVector(1.0f, 0.0f, 3.0f), 0);
 }
 
 CPlayer::~CPlayer()
@@ -74,8 +53,6 @@ void CPlayer::setNPC(bool a_bSet)
 	m_bIsNPC = a_bSet;
 }
 
-int log(const char *format, ...);
-
 void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 {
 	RakNet::BitStream 	l_BitStream(a_pPacket->data, a_pPacket->length, false);
@@ -87,7 +64,7 @@ void CPlayer::ProcessPlayerSync(Packet* a_pPacket)
 	
 	log("Proccess Sync...");
 	
-	if(!m_pPed->m_pMatrix)
+	if(!m_pPed || !m_pPed->m_pMatrix)
 		return;
 		
 	CWorld::Remove(m_pPed);

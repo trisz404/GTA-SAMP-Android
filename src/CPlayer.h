@@ -28,6 +28,19 @@ typedef struct ON_FOOT_SYNC_t // size 0x44
 
 class CPlayer
 {
+private:
+	CPed*		 	m_pPed = nullptr;
+	ON_FOOT_SYNC_t	m_onFootSyncData;
+	char*			m_pszNickName = "";
+	bool			m_bIsStreamed = false;
+	bool 			m_bIsNPC = false;	
+	uint32_t		m_uiNickColor = 0;
+	uint8_t			m_iTeamID = 0;
+	int				m_iSkinID = 0;
+	uint8_t			m_iFightingStyle = 0;
+	uint16_t		m_iSkillLevel[MAX_SKILL_LEVEL] = { 0 };
+	float			m_fFacingAngle = 0.0f;
+
 public:
 	CPlayer();
 	~CPlayer();
@@ -42,18 +55,6 @@ public:
 	
 	void WorldAdd();
 	void WorldRemove();
-
-	CPlayerPed* 	m_pPed = nullptr;
-	ON_FOOT_SYNC_t	m_onFootSyncData;
-	char*			m_pszNickName;
-	bool			m_bIsStreamed;
-	bool 			m_bIsNPC;	
-	uint32_t		m_uiNickColor;	
-	uint8_t			m_iTeamID;
-	int				m_iSkinID;
-	uint8_t			m_iFightingStyle;
-	uint16_t		m_iSkillLevel[MAX_SKILL_LEVEL];
-	float			m_fFacingAngle;
 	
 };
 

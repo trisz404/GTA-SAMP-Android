@@ -34,7 +34,9 @@ RNFILES = _findfirst.cpp AsynchronousFileIO.cpp BitStream.cpp \
 	SystemAddressList.cpp SystemDatabaseClient.cpp SystemDatabaseServer.cpp \
 	TableSerializer.cpp TCPInterface.cpp TelnetTransport.cpp \
 	SAMP/samp_netencr.cpp
-CFLAGS += -DHOST_ENDIAN_IS_LITTLE -DLITTLE_ENDIAN -DRAKSAMP_CLIENT -DNETCODE_OPENCONNLULZ=6969 -D_RAKNET_THREADSAFE
+CFLAGS += -DHOST_ENDIAN_IS_LITTLE -DLITTLE_ENDIAN -DRAKSAMP_CLIENT -DNETCODE_OPENCONNLULZ=6969
+# Do we need this flag?
+#CFLAGS += -D_RAKNET_THREADSAFE
 
 OBJDIR = obj
 

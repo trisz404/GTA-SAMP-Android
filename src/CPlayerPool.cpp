@@ -1,17 +1,9 @@
 #include "CPlayerPool.h"
-
-
-int log(const char *format, ...);
+#include "utils.h"
 
 CPlayerPool::CPlayerPool()
 {
-	for(int i = 0; i < MAX_PLAYERS; i++)
-	{
-		m_Players[i] = 0;		
-	}
-	
-	m_LocalPlayerID = -1;
-	m_LocalPlayer		= new CLocalPlayer();
+	m_LocalPlayer = new CLocalPlayer();
 }
 
 CPlayerPool::~CPlayerPool()
@@ -67,7 +59,7 @@ CPlayer* CPlayerPool::GetPlayer(_PlayerID a_PlayerID)
 	{
 		return m_Players[a_PlayerID];
 	}
-	return 0;
+	return nullptr;
 }
 
 CLocalPlayer* CPlayerPool::GetLocalPlayer()
@@ -89,8 +81,6 @@ void CPlayerPool::setLocalPlayerID(_PlayerID a_PlayerID)
 {
 	m_LocalPlayerID = a_PlayerID;
 }
-
-int log(const char *format, ...);
 
 void CPlayerPool::ProcessPlayerSync(Packet* a_pPacket)
 {
@@ -119,4 +109,3 @@ void CPlayerPool::StreamPlayerIn(RPCParameters *rpcParams)
 		m_Players[l_PlayerID]->StreamIn(rpcParams);
 	}
 }
-

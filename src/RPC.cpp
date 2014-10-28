@@ -6,10 +6,7 @@
 #include "types.h"
 #include "RPC.h"
 #include "CNetGame.h"
-
-
-int log(const char *format, ...);
-
+#include "utils.h"
 
 void ServerJoin(RPCParameters *rpcParams)
 {
@@ -30,7 +27,6 @@ void ServerJoin(RPCParameters *rpcParams)
 	l_bitStream.Read(l_szNickName, l_ucNickLen);
 
 	l_pNetGame->getPlayerPool()->New(l_PlayerID, l_szNickName, (bool)l_cIsNPC);
-	
 	
 	log("ServerJoin -> %s (%d)!", l_szNickName, l_PlayerID);
 }
@@ -120,6 +116,8 @@ void InitGame(RPCParameters *rpcParams)
 	l_pNetGame->getPlayerPool()->setLocalPlayerID(MyPlayerID);	
 	
 	log("Connected to %.64s", g_szHostName);
+	
+	l_pNetGame->m_isInGame = true;
 }
 
 void WorldPlayerAdd(RPCParameters *rpcParams)
