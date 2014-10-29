@@ -1,18 +1,15 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 /// \file
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #if defined(_MSC_VER) && _MSC_VER < 1299 // VC6 doesn't support template specialization
 #include "BitStream_NoTemplate.cpp"
@@ -32,16 +29,6 @@
 #else
 #include <arpa/inet.h>
 #endif
-
-// Was included for memset which now comes from string.h instead
-/*
-#if defined ( __APPLE__ ) || defined ( __APPLE_CC__ )
-	#include <malloc/malloc.h>
-#elif !defined(_COMPATIBILITY_2)
-	#include <malloc.h>
-#endif
-
-	*/
 
 // MSWin uses _copysign, others use copysign...
 #ifndef _WIN32
@@ -278,13 +265,12 @@ void BitStream::Write1( void )
 	numberOfBitsUsed++;
 }
 
-#ifdef _MSC_VER
-#pragma warning( disable : 4800 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 // Returns true if the next data read is a 1, false if it is a 0
 bool BitStream::ReadBit( void )
 {
-	return ( bool ) ( data[ readOffset >> 3 ] & ( 0x80 >> ( readOffset++ & 7 ) ) );
+	bool result = ( data[ readOffset >> 3 ] & ( 0x80 >> ( readOffset & 7 ) ) ) != 0;
+	readOffset++;
+	return result;
 }
 
 // Align the bitstream to the byte boundary and then write the specified number of bits.

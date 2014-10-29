@@ -16,7 +16,7 @@ LIBS = log GTASA
 SRCDIR = src
 SRCFILES = main.cpp utils.cpp hooks.cpp RPC.cpp CNetGame.cpp CPlayerPool.cpp CPlayer.cpp
 SRCFILES += CLocalPlayer.cpp
-# EmailSender.cpp FullyConnectedMesh.cpp NetworkIDGenerator.cpp
+
 RNDIR = raknet
 INCDIRS += $(RNDIR)
 RNFILES = _findfirst.cpp AsynchronousFileIO.cpp BitStream.cpp \
@@ -34,6 +34,7 @@ RNFILES = _findfirst.cpp AsynchronousFileIO.cpp BitStream.cpp \
 	SystemAddressList.cpp SystemDatabaseClient.cpp SystemDatabaseServer.cpp \
 	TableSerializer.cpp TCPInterface.cpp TelnetTransport.cpp \
 	SAMP/samp_netencr.cpp
+	
 CFLAGS += -DHOST_ENDIAN_IS_LITTLE -DLITTLE_ENDIAN -DRAKSAMP_CLIENT -DNETCODE_OPENCONNLULZ=6969
 # Do we need this flag?
 #CFLAGS += -D_RAKNET_THREADSAFE

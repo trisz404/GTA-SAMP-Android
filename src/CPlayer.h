@@ -30,7 +30,6 @@ class CPlayer
 {
 private:
 	CPed*		 	m_pPed = nullptr;
-	ON_FOOT_SYNC_t	m_onFootSyncData;
 	char*			m_pszNickName = "";
 	bool			m_bIsStreamed = false;
 	bool 			m_bIsNPC = false;	

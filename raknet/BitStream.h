@@ -15,6 +15,8 @@
 /// Software Foundation; either version 2 of the License, or (at your
 /// option) any later version.
 
+int log(const char *format, ...);
+		
 
 #if defined(_MSC_VER) && _MSC_VER < 1299 // VC6 doesn't support template specialization
 #include "BitStream_NoTemplate.h"
@@ -1016,10 +1018,13 @@ namespace RakNet
 		if ( readOffset + 1 > numberOfBitsUsed )
 			return false;
 
-		if ( data[ readOffset >> 3 ] & ( 0x80 >> ( readOffset++ % 8 ) ) )   // Is it faster to just write it out here?
+		if ( data[ readOffset >> 3 ] & ( 0x80 >> ( readOffset & 7 ) ) )   // Is it faster to just write it out here?
 			var = true;
 		else
 			var = false;
+
+		// Has to be on a different line for Mac
+		readOffset++;
 
 		return true;
 	}
@@ -1373,7 +1378,6 @@ namespace RakNet
 		if (!Read(cz))
 			return false;
 
-		// Calculate w from x,y,z
 		x=(templateType)(cx/65535.0);
 		y=(templateType)(cy/65535.0);
 		z=(templateType)(cz/65535.0);
