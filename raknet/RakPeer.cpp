@@ -39,7 +39,6 @@
 #include "PluginInterface.h"
 #include "StringCompressor.h"
 #include "StringTable.h"
-#include "NetworkIDGenerator.h"
 #include "NetworkTypes.h"
 #include "SHA1.h"
 #include "RakSleep.h"
@@ -164,7 +163,7 @@ RakPeer::RakPeer()
 	rawBytesSent = rawBytesReceived = compressedBytesSent = compressedBytesReceived = 0;
 	outputTree = inputTree = 0;
 	connectionSocket = INVALID_SOCKET;
-	MTUSize = DEFAULT_MTU_SIZE;
+	MTUSize = MAXIMUM_MTU_SIZE;
 	trackFrequencyTable = false;
 	maximumIncomingConnections = 0;
 	maximumNumberOfPeers = 0;

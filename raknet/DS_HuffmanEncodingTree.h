@@ -1,19 +1,16 @@
-/// \file
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_HuffmanEncodingTree.h
 /// \brief \b [Internal] Generates a huffman encoding tree, used for string and global compression.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #ifndef __HUFFMAN_ENCODING_TREE
 #define __HUFFMAN_ENCODING_TREE
@@ -30,40 +27,40 @@ class RAK_DLL_EXPORT HuffmanEncodingTree
 public:
 	HuffmanEncodingTree();
 	~HuffmanEncodingTree();
-	
-	/// Pass an array of bytes to array and a preallocated BitStream to receive the output
+
+	/// \brief Pass an array of bytes to array and a preallocated BitStream to receive the output.
 	/// \param [in] input Array of bytes to encode
 	/// \param [in] sizeInBytes size of \a input
 	/// \param [out] output The bitstream to write to
 	void EncodeArray( unsigned char *input, unsigned sizeInBytes, RakNet::BitStream * output );
-	
-	// Decodes an array encoded by EncodeArray()
+
+	// \brief Decodes an array encoded by EncodeArray().
 	unsigned DecodeArray( RakNet::BitStream * input, unsigned sizeInBits, unsigned maxCharsToWrite, unsigned char *output );
 	void DecodeArray( unsigned char *input, unsigned sizeInBits, RakNet::BitStream * output );
-	
-	/// Given a frequency table of 256 elements, all with a frequency of 1 or more, generate the tree
+
+	/// \brief Given a frequency table of 256 elements, all with a frequency of 1 or more, generate the tree.
 	void GenerateFromFrequencyTable( unsigned int frequencyTable[ 256 ] );
-	
-	/// Free the memory used by the tree
+
+	/// \brief Free the memory used by the tree.
 	void FreeMemory( void );
-	
+
 private:
-	
- /// The root node of the tree 
-	
+
+	/// The root node of the tree 
+
 	HuffmanEncodingTreeNode *root;
-	
- /// Used to hold bit encoding for one character
-	
-	
+
+	/// Used to hold bit encoding for one character
+
+
 	struct CharacterEncoding
 	{
 		unsigned char* encoding;
 		unsigned short bitLength;
 	};
-	
+
 	CharacterEncoding encodingTable[ 256 ];
-	
+
 	void InsertNodeIntoSortedList( HuffmanEncodingTreeNode * node, DataStructures::LinkedList<HuffmanEncodingTreeNode *> *huffmanEncodingTreeNodeList ) const;
 };
 

@@ -1,19 +1,16 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 /// \file
 /// \brief Contains TelnetTransport , used to supports the telnet transport protocol.  Insecure
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #ifndef __TELNET_TRANSPORT
 #define __TELNET_TRANSPORT
@@ -25,8 +22,8 @@ class TCPInterface;
 struct TelnetClient;
 
 /// \brief Use TelnetTransport to easily allow windows telnet to connect to your ConsoleServer
-/// To run Windows telnet, go to your start menu, click run, and in the edit box type "telnet <IP>" where <IP> is the ip address
-/// of your ConsoleServer (most likely the same IP as your game).
+/// \details To run Windows telnet, go to your start menu, click run, and in the edit box type "telnet <IP>" where <IP> is the ip address.<BR>
+/// of your ConsoleServer (most likely the same IP as your game).<BR>
 /// This implementation always echos commands.
 class RAK_DLL_EXPORT TelnetTransport : public TransportInterface
 {

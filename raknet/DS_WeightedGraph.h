@@ -1,19 +1,18 @@
-/// \file
-/// \brief \b [Internal] Weighted graph.  I'm assuming the indices are complex map types, rather than sequential numbers (which could be implemented much more efficiently).
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_WeightedGraph.h
+/// \internal
+/// \brief Weighted graph.  
+/// \details I'm assuming the indices are complex map types, rather than sequential numbers (which could be implemented much more efficiently).
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #ifndef __WEIGHTED_GRAPH_H
 #define __WEIGHTED_GRAPH_H
@@ -23,7 +22,7 @@
 #include "DS_Heap.h"
 #include "DS_Queue.h"
 #include "DS_Tree.h"
-#include <assert.h>
+#include "RakAssert.h"
 #ifdef _DEBUG
 #include <stdio.h>
 #endif
@@ -419,9 +418,12 @@ namespace DataStructures
 		rootNode=startNode;
 
 		// Clear the starting node column
-		adjacentIndex=adjacencyLists.GetIndexAtKey(startNode);
-		for (row2=0; row2 < adjacencyLists.Size(); row2++)
-			costMatrix[row2*adjacencyLists.Size() + adjacentIndex]=0;
+		if (adjacencyLists.Size())
+		{
+			adjacentIndex=adjacencyLists.GetIndexAtKey(startNode);
+			for (row2=0; row2 < adjacencyLists.Size(); row2++)
+				costMatrix[row2*adjacencyLists.Size() + adjacentIndex]=0;
+		}
 
 		while (row < adjacencyLists.Size()-1)
 		{

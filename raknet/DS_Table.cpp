@@ -1,7 +1,17 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 #include "DS_Table.h"
 #include "DS_OrderedList.h"
 #include <string.h>
-#include <assert.h>
+#include "RakAssert.h"
 
 using namespace DataStructures;
 
@@ -9,19 +19,15 @@ using namespace DataStructures;
 #pragma warning( push )
 #endif
 
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 void ExtendRows(Table::Row* input, int index)
 {
+	(void) index;
 	input->cells.Insert(new Table::Cell );
 }
-
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 void FreeRow(Table::Row* input, int index)
 {
+	(void) index;
+
 	unsigned i;
 	for (i=0; i < input->cells.Size(); i++)
 	{
@@ -64,14 +70,14 @@ Table::Cell::Cell( const Table::Cell & input)
 }
 void Table::Cell::Set(int input)
 {
-	assert(isEmpty);
+	RakAssert(isEmpty);
 	i=input;
 	c=0;
 	isEmpty=false;
 }
 void Table::Cell::Set(char *input)
 {
-	assert(isEmpty);
+	RakAssert(isEmpty);
 	if (input && input[0])
 	{
 		i=(int)strlen(input)+1;
@@ -85,7 +91,7 @@ void Table::Cell::Set(char *input)
 }
 void Table::Cell::Set(char *input, int inputLength)
 {
-	assert(isEmpty);
+	RakAssert(isEmpty);
 	if (input)
 	{
 		c = new char [inputLength];
@@ -101,17 +107,17 @@ void Table::Cell::Set(char *input, int inputLength)
 }
 void Table::Cell::Get(int *output)
 {
-	assert(isEmpty==false);
+	RakAssert(isEmpty==false);
 	*output=i;
 }
 void Table::Cell::Get(char *output)
 {
-	assert(isEmpty==false);
+	RakAssert(isEmpty==false);
 	strcpy(output, c);
 }
 void Table::Cell::Get(char *output, int *outputLength)
 {
-	assert(isEmpty==false);
+	RakAssert(isEmpty==false);
 	memcpy(output, c, i);
 	if (outputLength)
 		*outputLength=i;
@@ -314,7 +320,7 @@ void Table::RemoveRows(Table *tableContainingRowIDs)
 }
 bool Table::UpdateCell(unsigned rowId, unsigned columnIndex, int value)
 {
-	assert(columns[columnIndex].columnType==NUMERIC);
+	RakAssert(columns[columnIndex].columnType==NUMERIC);
 
 	Row *row = GetRowByID(rowId);
 	if (row)
@@ -326,7 +332,7 @@ bool Table::UpdateCell(unsigned rowId, unsigned columnIndex, int value)
 }
 bool Table::UpdateCell(unsigned rowId, unsigned columnIndex, char *str)
 {
-	assert(columns[columnIndex].columnType==STRING);
+	RakAssert(columns[columnIndex].columnType==STRING);
 
 	Row *row = GetRowByID(rowId);
 	if (row)
@@ -338,7 +344,7 @@ bool Table::UpdateCell(unsigned rowId, unsigned columnIndex, char *str)
 }
 bool Table::UpdateCell(unsigned rowId, unsigned columnIndex, int byteLength, char *data)
 {
-	assert(columns[columnIndex].columnType==BINARY);
+	RakAssert(columns[columnIndex].columnType==BINARY);
 
 	Row *row = GetRowByID(rowId);
 	if (row)

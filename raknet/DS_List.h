@@ -1,24 +1,23 @@
-/// \file
-/// \brief \b [Internal] Array based list.  Usually the Queue class is used instead, since it has all the same functionality and is only worse at random access.
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_List.h
+/// \internal
+/// \brief Array based list.  
+/// \details Usually the Queue class is used instead, since it has all the same functionality and is only worse at random access.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #ifndef __LIST_H
 #define __LIST_H 
 
-#include <assert.h>
+#include "RakAssert.h"
 #include <string.h> // memmove
 #include "Export.h"
 
@@ -30,6 +29,7 @@ static const unsigned int MAX_UNSIGNED_LONG = 4294967295U;
 namespace DataStructures
 {
 	/// \brief Array based implementation of a list.
+	/// \note ONLY USE THIS FOR SHALLOW COPIES.  I don't bother with operator= to improve performance.
 	template <class list_type>
 	class RAK_DLL_EXPORT List
 	{	
@@ -37,50 +37,50 @@ namespace DataStructures
 		/// Default constructor
 		List();
 
-		/// Destructor
+		// Destructor
 		~List();
 		
-		/// Copy constructor
+		/// \brief Copy constructor.
 		/// \param[in]  original_copy The list to duplicate 
 		List( const List& original_copy );
 		
-		/// Assign one list to another
+		/// \brief Assign one list to another.
 		List& operator= ( const List& original_copy );
 		
-		/// Access an element by its index in the array 
+		/// \brief Access an element by its index in the array.
 		/// \param[in]  position The index into the array. 
 		/// \return The element at position \a position. 
 		list_type& operator[] ( const unsigned int position ) const;
 		
-		/// Insert an element at position \a position in the list 
+		/// \brief Insert an element at position \a position in the list.
 		/// \param[in] input The new element. 
 		/// \param[in] position The position of the new element. 		
 		void Insert( const list_type input, const unsigned int position );
 		
-		/// Insert at the end of the list.
+		/// \brief Insert at the end of the list.
 		/// \param[in] input The new element. 
 		void Insert( const list_type input );
 		
-		/// Replace the value at \a position by \a input.  If the size of
-		/// the list is less than @em position, it increase the capacity of
+		/// \brief Replace the value at \a position by \a input.  
+		/// \details If the size of the list is less than @em position, it increase the capacity of
 		/// the list and fill slot with @em filler.
 		/// \param[in] input The element to replace at position @em position. 
 		/// \param[in] filler The element use to fill new allocated capacity. 
 		/// \param[in] position The position of input in the list. 		
 		void Replace( const list_type input, const list_type filler, const unsigned int position );
 		
-		/// Replace the last element of the list by \a input .
+		/// \brief Replace the last element of the list by \a input.
 		/// \param[in] input The element used to replace the last element. 
 		void Replace( const list_type input );
 		
-		/// Delete the element at position \a position. 
+		/// \brief Delete the element at position \a position. 
 		/// \param[in] position The index of the element to delete 
 		void RemoveAtIndex( const unsigned int position );
 		
-		/// Delete the element at the end of the list 
+		/// \brief Delete the element at the end of the list.
 		void Del(const unsigned num=1);
 		
-		/// Returns the index of the specified item or MAX_UNSIGNED_LONG if not found
+		/// \brief Returns the index of the specified item or MAX_UNSIGNED_LONG if not found.
 		/// \param[in] input The element to check for 
 		/// \return The index or position of @em input in the list. 
 		/// \retval MAX_UNSIGNED_LONG The object is not in the list
@@ -90,10 +90,10 @@ namespace DataStructures
 		/// \return The number of elements in the list
 		unsigned int Size( void ) const;
 		
-		/// Clear the list		
+		/// \brief Clear the list		
 		void Clear( bool doNotDeallocate=false );
 		
-		/// Frees overallocated members, to use the minimum memory necessary
+		/// \brief Frees overallocated members, to use the minimum memory necessary.
 		/// \attention 
 		/// This is a slow operation		
 		void Compress( void );
@@ -180,20 +180,20 @@ namespace DataStructures
 	}
 
 
-	template <class list_type>
-		inline list_type& List<list_type>::operator[] ( const unsigned int position ) const
-	{
-#ifdef _DEBUG
-		assert ( position < list_size );
-#endif
-		return listArray[ position ];
-	}
+		template <class list_type>
+			inline list_type& List<list_type>::operator[] ( const unsigned int position ) const
+		{
+		#ifdef _DEBUG
+			RakAssert ( position < list_size );
+		#endif
+			return listArray[ position ];
+		}
 
 	template <class list_type>
 		void List<list_type>::Insert( const list_type input, const unsigned int position )
 	{
 #ifdef _DEBUG
-		assert( position <= list_size );
+		RakAssert( position <= list_size );
 #endif
 
 		// Reallocate list if necessary
@@ -314,7 +314,7 @@ namespace DataStructures
 
 #ifdef _DEBUG
 
-			assert( list_size == position + 1 );
+			RakAssert( list_size == position + 1 );
 
 #endif
 
@@ -332,7 +332,7 @@ namespace DataStructures
 		void List<list_type>::RemoveAtIndex( const unsigned int position )
 	{
 #ifdef _DEBUG
-		assert( position < list_size );
+		RakAssert( position < list_size );
 #endif
 
 		if ( position < list_size )
@@ -353,7 +353,7 @@ namespace DataStructures
 	{
 		// Delete the last elements on the list.  No compression needed
 #ifdef _DEBUG
-		assert(list_size>=num);
+		RakAssert(list_size>=num);
 #endif
 		list_size-=num;
 	}

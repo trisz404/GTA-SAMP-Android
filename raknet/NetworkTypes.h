@@ -55,6 +55,10 @@ typedef long long RakNetTimeNS;
 /// Corresponds to a network address
 struct RAK_DLL_EXPORT PlayerID
 {
+	PlayerID();
+
+	PlayerID(int binaryAddress, unsigned short port);
+
 	///The peer address from inet_addr.
 	unsigned int binaryAddress;
 	///The port number

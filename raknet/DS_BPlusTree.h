@@ -1,9 +1,24 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_BPlusTree.h
+///
+
+
 #ifndef __B_PLUS_TREE_CPP
 #define __B_PLUS_TREE_CPP
 
 #include "DS_MemoryPool.h"
 #include "DS_Queue.h"
 #include <stdio.h>
+#include "RakAssert.h"
 
 // Java
 // http://www.seanster.com/BplusTree/BplusTree.html
@@ -23,10 +38,12 @@
 namespace DataStructures
 {
 	/// Used in the BPlusTree.  Used for both leaf and index nodes.
+	/// Don't use a constructor or destructor, due to the memory pool I am using
 	template <class KeyType, class DataType, int order>
 	struct Page
 	{
-		// We use the same data structure for both leaf and index nodes.  It uses a little more memory for index nodes but reduces
+		// We use the same data structure for both leaf and index nodes.  
+		// It uses a little more memory for index nodes but reduces
 		// memory fragmentation, allocations, and deallocations.
 		bool isLeaf;
 
@@ -109,7 +126,7 @@ namespace DataStructures
 	template<class KeyType, class DataType, int order>
 		BPlusTree<KeyType, DataType, order>::BPlusTree ()
 	{
-		assert(order>1);
+		RakAssert(order>1);
 		root=0;
 		leftmostLeaf=0;
 	}
@@ -186,7 +203,7 @@ namespace DataStructures
 		else if (FindDeleteRebalance(key, root, &underflow,root->keys[0], &returnAction, out)==false)
 			return false;
 
-//		assert(returnAction.action==ReturnAction::NO_ACTION);
+//		RakAssert(returnAction.action==ReturnAction::NO_ACTION);
 
 		if (underflow && root->size==0)
 		{
@@ -580,8 +597,8 @@ namespace DataStructures
 					// the first key is the middle key.  Remove it from the page and push it to the parent
 					returnAction->action=ReturnAction::PUSH_KEY_TO_PARENT;
 					returnAction->key1=newPage->keys[0];
-					for (int i=0; i < destIndex-1; i++)
-						newPage->keys[i]=newPage->keys[i+1];
+					for (int j=0; j < destIndex-1; j++)
+						newPage->keys[j]=newPage->keys[j+1];
 					
 				}
 				cur->size=order/2;
@@ -608,14 +625,15 @@ namespace DataStructures
 					// the first key is the middle key.  Remove it from the page and push it to the parent
 					returnAction->action=ReturnAction::PUSH_KEY_TO_PARENT;
 					returnAction->key1=newPage->keys[0];
-					for (int i=0; i < destIndex-1; i++)
-						newPage->keys[i]=newPage->keys[i+1];
+					for (int j=0; j < destIndex-1; j++)
+						newPage->keys[j]=newPage->keys[j+1];
 				}
 				cur->size=(order+1)/2-1;
 				if (cur->size)
 				{
 					bool b = GetIndexOf(key, cur, &insertionIndex);
-					assert(b==false);
+					(void) b;
+					RakAssert(b==false);
 				}
 				else
 					insertionIndex=0;
@@ -778,7 +796,7 @@ namespace DataStructures
 			{
 				if (newPage->isLeaf==false)
 				{
-					assert(returnAction->action==ReturnAction::PUSH_KEY_TO_PARENT);
+					RakAssert(returnAction->action==ReturnAction::PUSH_KEY_TO_PARENT);
 					newPage->size--; 
 					return InsertIntoNode(returnAction->key1, data, branchIndex, newPage, cur, returnAction);
 				}
@@ -832,7 +850,7 @@ namespace DataStructures
 				if (newPage->isLeaf==false)
 				{
 					// One key is pushed up through the stack.  I store that at keys[0] but it has to be removed for the page to be correct
-					assert(returnAction.action==ReturnAction::PUSH_KEY_TO_PARENT);
+					RakAssert(returnAction.action==ReturnAction::PUSH_KEY_TO_PARENT);
 					newKey=returnAction.key1;
 					newPage->size--;
 				}
@@ -876,7 +894,7 @@ namespace DataStructures
 	template<class KeyType, class DataType, int order>
 		unsigned BPlusTree<KeyType, DataType, order>::Size(void) const
 	{
-		int count=0;
+		unsigned int count=0;
 		DataStructures::Page<KeyType, DataType, order> *cur = GetListHead();
 		while (cur)
 		{
@@ -893,7 +911,7 @@ namespace DataStructures
 	template<class KeyType, class DataType, int order>
 		bool BPlusTree<KeyType, DataType, order>::GetIndexOf(const KeyType key, Page<KeyType, DataType, order> *page, int *out) const
 	{
-		assert(page->size>0);
+		RakAssert(page->size>0);
 		int index, upperBound, lowerBound;
 		upperBound=page->size-1;
 		lowerBound=0;
@@ -1014,14 +1032,14 @@ namespace DataStructures
 	template<class KeyType, class DataType, int order>
 	void BPlusTree<KeyType, DataType, order>::ValidateTreeRecursive(Page<KeyType, DataType, order> *cur)
 	{
-		assert(cur==root || cur->size>=order/2);
+		RakAssert(cur==root || cur->size>=order/2);
 
 		if (cur->children[0]->isLeaf)
 		{
-			assert(cur->children[0]->keys[0] < cur->keys[0]);
+			RakAssert(cur->children[0]->keys[0] < cur->keys[0]);
 			for (int i=0; i < cur->size; i++)
 			{
-				assert(cur->children[i+1]->keys[0]==cur->keys[i]);
+				RakAssert(cur->children[i+1]->keys[0]==cur->keys[i]);
 			}
 		}
 		else
@@ -1134,15 +1152,15 @@ void main(void)
 			for (j=0; j < removedList.Size(); j++)
 			{
 				b=btree.Get(removedList[j], temp);
-				assert(b==false);
+				RakAssert(b==false);
 			}
 			for (j=0; j < haveList.Size(); j++)
 			{
 				b=btree.Get(haveList[j], temp);
-				assert(b==true);
-				assert(haveList[j]==temp);
+				RakAssert(b==true);
+				RakAssert(haveList[j]==temp);
 			}
-			assert(btree.Size()==haveList.Size());
+			RakAssert(btree.Size()==haveList.Size());
 			btree.ValidateTree();
 		}
 		btree.Clear();
@@ -1150,7 +1168,7 @@ void main(void)
 		haveList.Clear();
 	}
 
-	printf("Done. %i\n", btree.Size());
+	RAKNET_DEBUG_PRINTF("Done. %i\n", btree.Size());
 	char ch[256];
 	gets(ch);
 }

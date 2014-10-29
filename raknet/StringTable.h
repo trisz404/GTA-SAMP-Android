@@ -1,19 +1,16 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 /// \file
 /// \brief A simple class to encode and decode known strings based on a lookup table.  Similar to the StringCompressor class.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #ifndef __STRING_TABLE_H
 #define __STRING_TABLE_H
@@ -38,7 +35,7 @@ struct StrAndBool
 };
 int RAK_DLL_EXPORT StrAndBoolComp( char *const &key, const StrAndBool &data );
 
-/// This is an even more efficient alternative to StringCompressor in that it writes a single byte from a lookup table and only does compression
+/// \details This is an even more efficient alternative to StringCompressor in that it writes a single byte from a lookup table and only does compression
 /// if the string does not already exist in the table.
 /// All string tables must match on all systems - hence you must add all the strings in the same order on all systems.
 /// Furthermore, this must be done before sending packets that use this class, since the strings are ordered for fast lookup.  Adding after that time would mess up all the indices so don't do it.

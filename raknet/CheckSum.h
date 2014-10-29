@@ -1,7 +1,16 @@
-/// \file
-/// \brief \b [Internal] Generates and validates checksums
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 ///
-/// \note I didn't write this, but took it from http://www.flounder.com/checksum.htm
+/// \file CheckSum.cpp
+/// \brief [Internal] CheckSum implementation from http://www.flounder.com/checksum.htm
 ///
 
 #ifndef __CHECKSUM_H

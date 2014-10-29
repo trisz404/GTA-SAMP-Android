@@ -74,7 +74,7 @@ int SplitPacketIndexComp( SplitPacketIndexType const &key, InternalPacket* const
 //-------------------------------------------------------------------------------------------------------
 // Constructor
 //-------------------------------------------------------------------------------------------------------
-ReliabilityLayer::ReliabilityLayer() : updateBitStream( DEFAULT_MTU_SIZE )   // preallocate the update bitstream so we can avoid a lot of reallocs at runtime
+ReliabilityLayer::ReliabilityLayer() : updateBitStream( MAXIMUM_MTU_SIZE )   // preallocate the update bitstream so we can avoid a lot of reallocs at runtime
 {
 #ifdef __USE_IO_COMPLETION_PORTS
 	readWriteSocket = INVALID_SOCKET;

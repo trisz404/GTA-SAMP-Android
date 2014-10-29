@@ -1,25 +1,23 @@
-/// \file
-/// \brief \b [Internal] A queue used by RakNet.
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_Queue.h
+/// \internal
+/// \brief A queue used by RakNet.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #ifndef __QUEUE_H
 #define __QUEUE_H
 
 // Template classes have to have all the code in the header file
-#include <assert.h>
+#include "RakAssert.h"
 #include "Export.h"
 
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
@@ -98,7 +96,7 @@ namespace DataStructures
 		inline queue_type Queue<queue_type>::Pop( void )
 	{
 #ifdef _DEBUG
-		assert( allocation_size > 0 && Size() >= 0 && head != tail);
+		RakAssert( allocation_size > 0 && Size() >= 0 && head != tail);
 #endif
 		//head=(head+1) % allocation_size;
 
@@ -170,8 +168,8 @@ namespace DataStructures
 		inline queue_type Queue<queue_type>::Peek( void ) const
 	{
 #ifdef _DEBUG
-		assert( head != tail );
-		assert( allocation_size > 0 && Size() >= 0 );
+		RakAssert( head != tail );
+		RakAssert( allocation_size > 0 && Size() >= 0 );
 #endif
 
 		return ( queue_type ) array[ head ];
@@ -203,8 +201,7 @@ namespace DataStructures
 			queue_type * new_array;
 			new_array = new queue_type[ allocation_size * 2 ];
 #ifdef _DEBUG
-
-			assert( new_array );
+			RakAssert( new_array );
 #endif
 
 			for ( unsigned int counter = 0; counter < allocation_size; ++counter )
@@ -355,7 +352,7 @@ namespace DataStructures
 		inline queue_type& Queue<queue_type>::operator[] ( unsigned int position ) const
 	{
 #ifdef _DEBUG
-		assert( position < Size() );
+		RakAssert( position < Size() );
 #endif
 		//return array[(head + position) % allocation_size];
 
@@ -369,8 +366,8 @@ namespace DataStructures
 		void Queue<queue_type>::Del( unsigned int position )
 	{
 #ifdef _DEBUG
-		assert( position < Size() );
-		assert( head != tail );
+		RakAssert( position < Size() );
+		RakAssert( head != tail );
 #endif
 
 		if ( head == tail || position >= Size() )

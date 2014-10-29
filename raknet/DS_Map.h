@@ -1,25 +1,24 @@
-/// \file
-/// \brief \b [Internal] Map
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_Map.h
+/// \internal
+/// \brief Map
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #ifndef __RAKNET_MAP_H
 #define __RAKNET_MAP_H
 
 #include "DS_OrderedList.h"
 #include "Export.h"
+#include "RakAssert.h"
 
 // If I want to change this to a red-black tree, this is a good site: http://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html
 // This makes insertions and deletions faster.  But then traversals are slow, while they are currently fast.
@@ -133,7 +132,7 @@ namespace DataStructures
 		bool objectExists;
 		unsigned index;
 		index=mapNodeList.GetIndexFromKey(key, &objectExists);
-		assert(objectExists);
+		RakAssert(objectExists);
 		SaveLastSearch(key,index);
 		return mapNodeList[index].mapNodeData;
 	}
@@ -147,7 +146,7 @@ namespace DataStructures
 		bool objectExists;
 		unsigned index;
 		index=mapNodeList.GetIndexFromKey(key, &objectExists);
-		assert(objectExists);
+		RakAssert(objectExists);
 		SaveLastSearch(key,index);
 		return index;
 	}
@@ -169,7 +168,7 @@ namespace DataStructures
 		else
 		{
 			index=mapNodeList.GetIndexFromKey(key, &objectExists);
-			assert(objectExists);
+			RakAssert(objectExists);
 		}		
 		data_type tmp = mapNodeList[index].mapNodeData;
 		mapNodeList.RemoveAtIndex(index);
@@ -215,7 +214,7 @@ namespace DataStructures
 		else
 		{
 			index=mapNodeList.GetIndexFromKey(key, &objectExists);
-			assert(objectExists);
+			RakAssert(objectExists);
 			SaveLastSearch(key,index);
 		}		
 
@@ -229,7 +228,7 @@ namespace DataStructures
 		unsigned index;
 		bool objectExists;
 		index=mapNodeList.GetIndexFromKey(key, &objectExists);
-		assert(objectExists==false);
+		RakAssert(objectExists==false);
 #endif
 		SaveLastSearch(key,mapNodeList.Insert(key,MapNode(key,data)));
 	}

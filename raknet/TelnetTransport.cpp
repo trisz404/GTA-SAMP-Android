@@ -1,16 +1,23 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 #include "TelnetTransport.h"
 #include "TCPInterface.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include "LinuxStrings.h"
 
 // #define _PRINTF_DEBUG
 
 #define ECHO_INPUT
-
-#if (defined(__GNUC__)  || defined(__GCCXML__))
-#define _vsnprintf vsnprintf
-#endif
 
 #ifdef _MSC_VER
 #pragma warning( push )

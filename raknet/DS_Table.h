@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_Table.h
+///
+
+
 #ifndef __TABLE_H
 #define __TABLE_H
 
@@ -9,7 +23,7 @@
 #include "DS_BPlusTree.h"
 
 #define _TABLE_BPLUS_TREE_ORDER 16
-#define _TABLE_MAX_COLUMN_NAME_LENGTH 32
+#define _TABLE_MAX_COLUMN_NAME_LENGTH 64
 
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
 /// As these data structures are stand-alone, you can use them outside of RakNet for your own projects if you wish.
@@ -17,9 +31,9 @@ namespace DataStructures
 {
 
 	/// \brief Holds a set of columns, a set of rows, and rows times columns cells.
-	/// The table data structure is useful if you want to store a set of structures and perform queries on those structures
-	/// This is a relatively simple and fast implementation of the types of tables commonly used in databases
-	/// See TableSerializer to serialize data members of the table
+	/// \details The table data structure is useful if you want to store a set of structures and perform queries on those structures.<BR>
+	/// This is a relatively simple and fast implementation of the types of tables commonly used in databases.<BR>
+	/// See TableSerializer to serialize data members of the table.<BR>
 	/// See LightweightDatabaseClient and LightweightDatabaseServer to transmit the table over the network.
 	class Table
 	{
@@ -132,6 +146,7 @@ namespace DataStructures
 		};
 		
 		// Sort on increasing or decreasing order for a particular column
+		// Note: If this structure is changed the struct in the swig files need to be changed as well
 		struct SortQuery
 		{
 			/// The index of the table column we are sorting on
@@ -141,10 +156,10 @@ namespace DataStructures
 			SortQueryType operation;
 		};
 
-		/// Constructor
+		// Constructor
 		Table();
 
-		/// Destructor
+		// Destructor
 		~Table();
 
 		/// \brief Adds a column to the table
@@ -158,7 +173,7 @@ namespace DataStructures
 		void RemoveColumn(unsigned columnIndex);
 
 		/// \brief Gets the index of a column by name
-		/// Column indices are stored in the order they are added.
+		/// \details Column indices are stored in the order they are added.
 		/// \param[in] columnName The name of the column
 		/// \return The index of the column, or (unsigned)-1 if no such column
 		unsigned ColumnIndex(char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH]);
@@ -182,7 +197,7 @@ namespace DataStructures
 		unsigned GetRowCount(void) const;
 
 		/// \brief Adds a row to the table
-		/// New rows are added with empty values for all cells.  However, if you specify initialCelLValues you can specify initial values
+		/// \details New rows are added with empty values for all cells.  However, if you specify initialCelLValues you can specify initial values
 		/// It's up to you to ensure that the values in the specific cells match the type of data used by that row
 		/// rowId can be considered the primary key for the row.  It is much faster to lookup a row by its rowId than by searching keys.
 		/// rowId must be unique
@@ -193,15 +208,15 @@ namespace DataStructures
 		Table::Row* AddRow(unsigned rowId);
 		Table::Row* AddRow(unsigned rowId, DataStructures::List<Cell> &initialCellValues);
 
-		/// Removes a row specified by rowId
+		/// \brief Removes a row specified by rowId.
 		/// \param[in] rowId The ID of the row
 		void RemoveRow(unsigned rowId);
 
-		/// Removes all the rows with IDs that the specified table also has
+		/// \brief Removes all the rows with IDs that the specified table also has.
 		/// \param[in] tableContainingRowIDs The IDs of the rows
 		void RemoveRows(Table *tableContainingRowIDs);
 
-		/// Updates a particular cell in the table
+		/// \brief Updates a particular cell in the table.
 		/// \note If you are going to update many cells of a particular row, it is more efficient to call GetRow and perform the operations on the row directly.
 		/// \note Row pointers do not change, so you can also write directly to the rows for more efficiency.
         /// \param[in] rowId The ID of the row
@@ -211,15 +226,16 @@ namespace DataStructures
 		bool UpdateCell(unsigned rowId, unsigned columnIndex, char *str);
 		bool UpdateCell(unsigned rowId, unsigned columnIndex, int byteLength, char *data);
 
-		/// Gets a row.  More efficient to do this and access Row::cells than to repeatedly call GetCell.
+		/// \brief Gets a row.  More efficient to do this and access Row::cells than to repeatedly call GetCell.
 		/// You can also update cells in rows from this function.
 		/// \param[in] rowId The ID of the row
 		/// \return The desired row, or 0 if no such row.
 		Row* GetRowByID(unsigned rowId);
 
-		/// Gets a row at a specific index
+		/// \brief Gets a row at a specific index.
 		/// rowIndex should be less than GetRowCount()
 		/// \param[in] rowIndex The index of the row
+		/// \param[out] key The ID of the row returned
 		/// \return The desired row, or 0 if no such row.
 		Row* GetRowByIndex(unsigned rowIndex);
 
@@ -234,7 +250,7 @@ namespace DataStructures
 		void QueryTable(unsigned *columnSubset, unsigned numColumnSubset, FilterQuery *inclusionFilters, unsigned numInclusionFilters, unsigned *rowIds, unsigned numRowIDs, Table *result);
 
 		/// \brief Sorts the table by rows
-		/// You can sort the table in ascending or descending order on one or more columns
+		/// \details You can sort the table in ascending or descending order on one or more columns
 		/// Columns have precedence in the order they appear in the \a sortQueries array
 		/// If a row cell on column n has the same value as a a different row on column n, then the row will be compared on column n+1
 		/// \param[in] sortQueries A list of SortQuery structures, defining the sorts to perform on the table
@@ -242,10 +258,10 @@ namespace DataStructures
 		/// \param[out] out The address of an array of Rows, which will receive the sorted output.  The array must be long enough to contain all returned rows, up to GetRowCount()
 		void SortTable(Table::SortQuery *sortQueries, unsigned numSortQueries, Table::Row** out);
 
-		/// Frees all memory in the table.
+		/// \brief Frees all memory in the table.
 		void Clear(void);
 
-		/// Writes a text representation of the row to \a out
+		/// \brief Writes a text representation of the row to \a out.
 		/// \param[out] out A pointer to an array of bytes which will hold the output.
 		/// \param[in] outLength The size of the \a out array
 		/// \param[in] columnDelineator What character to print to delineate columns
@@ -253,13 +269,13 @@ namespace DataStructures
 		/// \param[in] inputRow The row to print
 		void PrintRow(char *out, int outLength, char columnDelineator, bool printDelineatorForBinary, Table::Row* inputRow);
 
-		/// Direct access to make things easier
+		/// \brief Direct access to make things easier.
 		DataStructures::List<ColumnDescriptor>& GetColumns(void);
 
-		/// Direct access to make things easier
+		/// \brief Direct access to make things easier.
 		DataStructures::BPlusTree<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>& GetRows(void);
 
-		// Get the head of a linked list containing all the row data
+		/// \brief Get the head of a linked list containing all the row data.
 		DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> * GetListHead(void);
 
 	protected:

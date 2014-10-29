@@ -1,8 +1,18 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 #include "RakNetCommandParser.h"
 #include "TransportInterface.h"
 #include "RakPeerInterface.h"
 #include "BitStream.h"
-#include <assert.h>
+#include "RakAssert.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -59,11 +69,11 @@ void RakNetCommandParser::SetRakPeerInterface(RakPeerInterface *rakPeer)
 {
 	peer=rakPeer;
 }
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, PlayerID playerId, const char *originalString)
 {
+	(void) originalString;
+	(void) numParameters;
+
 	if (peer==0)
 		return false;
 
@@ -126,12 +136,12 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 	}
 	else if (strcmp(command, "CloseConnection")==0)
 	{
-		peer->CloseConnection(IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1])),atoi(parameterList[2])!=0,(unsigned char)atoi(parameterList[3]));
+		peer->CloseConnection(PlayerID(atoi(parameterList[0]), atoi(parameterList[1])),atoi(parameterList[2])!=0,(unsigned char)atoi(parameterList[3]));
 		ReturnResult(command, transport, playerId);
 	}
 	else if (strcmp(command, "GetIndexFromPlayerID")==0)
 	{
-		ReturnResult(peer->GetIndexFromPlayerID(IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
+		ReturnResult(peer->GetIndexFromPlayerID(PlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
 	}
 	else if (strcmp(command, "GetPlayerIDFromIndex")==0)
 	{
@@ -158,7 +168,7 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 	}
 	else if (strcmp(command, "Ping1")==0)
 	{
-		peer->Ping(IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1])));
+		peer->Ping(PlayerID(atoi(parameterList[0]), atoi(parameterList[1])));
 		ReturnResult(command, transport, playerId);
 	}
 	else if (strcmp(command, "Ping2")==0)
@@ -168,15 +178,15 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 	}
 	else if (strcmp(command, "GetAveragePing")==0)
 	{
-		ReturnResult(peer->GetAveragePing(IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
+		ReturnResult(peer->GetAveragePing(PlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
 	}
 	else if (strcmp(command, "GetLastPing")==0)
 	{
-		ReturnResult(peer->GetLastPing(IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
+		ReturnResult(peer->GetLastPing(PlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
 	}
 	else if (strcmp(command, "GetLowestPing")==0)
 	{
-		ReturnResult(peer->GetLowestPing(IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
+		ReturnResult(peer->GetLowestPing(PlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
 	}
 	else if (strcmp(command, "SetOccasionalPing")==0)
 	{
@@ -194,11 +204,11 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 	}
 	else if (strcmp(command, "GetExternalID")==0)
 	{
-		ReturnResult(peer->GetExternalID(IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
+		ReturnResult(peer->GetExternalID(PlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
 	}
 	else if (strcmp(command, "SetTimeoutTime")==0)
 	{
-		peer->SetTimeoutTime(atoi(parameterList[0]), IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1])));
+		peer->SetTimeoutTime(atoi(parameterList[0]), PlayerID(atoi(parameterList[0]), atoi(parameterList[1])));
 		ReturnResult(command, transport, playerId);
 	}
 	else if (strcmp(command, "SetMTUSize")==0)
@@ -215,7 +225,7 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 	}
 	else if (strcmp(command, "PlayerIDToDottedIP")==0)
 	{
-		ReturnResult((char*)peer->PlayerIDToDottedIP(IntegersToPlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
+		ReturnResult((char*)peer->PlayerIDToDottedIP(PlayerID(atoi(parameterList[0]), atoi(parameterList[1]))), command, transport, playerId);
 	}
 	else if (strcmp(command, "IPToPlayerID")==0)
 	{

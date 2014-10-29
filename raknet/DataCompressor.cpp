@@ -1,12 +1,12 @@
 #include "DataCompressor.h"
 #include "DS_HuffmanEncodingTree.h"
-#include <assert.h>
-#include <string.h> // Use string.h rather than memory.h for the PS3
+#include "RakAssert.h"
+#include <string.h> // Use string.h rather than memory.h for a console
 
 void DataCompressor::Compress( unsigned char *userData, unsigned sizeInBytes, RakNet::BitStream * output )
 {
 	// Don't use this for small files as you will just make them bigger!
-	assert(sizeInBytes > 2048);
+	RakAssert(sizeInBytes > 2048);
 
 	unsigned int frequencyTable[ 256 ];
 	unsigned int i;
@@ -34,7 +34,8 @@ void DataCompressor::Compress( unsigned char *userData, unsigned sizeInBytes, Ra
 unsigned DataCompressor::DecompressAndAllocate( RakNet::BitStream * input, unsigned char **output )
 {
 	HuffmanEncodingTree tree;
-	unsigned int bitsUsed, destinationSizeInBytes, decompressedBytes;
+	unsigned int bitsUsed, destinationSizeInBytes;
+	unsigned int decompressedBytes;
 	unsigned int frequencyTable[ 256 ];
 	unsigned i;
 	
@@ -46,13 +47,13 @@ unsigned DataCompressor::DecompressAndAllocate( RakNet::BitStream * input, unsig
 	{
 		// Read error
 #ifdef _DEBUG
-		assert(0);
+		RakAssert(0);
 #endif
 		return 0;
 	}
 	*output = new unsigned char [destinationSizeInBytes];
 	tree.GenerateFromFrequencyTable(frequencyTable);
 	decompressedBytes=tree.DecodeArray(input, bitsUsed, destinationSizeInBytes, *output );
-	assert(decompressedBytes==destinationSizeInBytes);
+	RakAssert(decompressedBytes==destinationSizeInBytes);
 	return destinationSizeInBytes;
 }

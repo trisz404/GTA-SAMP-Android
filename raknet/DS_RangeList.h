@@ -1,14 +1,30 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_RangeList.h
+/// \internal
+/// \brief A queue implemented as a linked list.
+///
+
+
 #ifndef __RANGE_LIST_H
 #define __RANGE_LIST_H
 
 #include "DS_OrderedList.h"
 #include "BitStream.h"
-#include <assert.h>
+#include "RakAssert.h"
 
 namespace DataStructures
 {
-    template <class range_type>
-    struct RangeNode
+	template <class range_type>
+	struct RangeNode
     {
         RangeNode() {}
         ~RangeNode() {}
@@ -47,7 +63,7 @@ namespace DataStructures
 	template <class range_type>
 	unsigned RangeList<range_type>::Serialize(RakNet::BitStream *in, int maxBits, bool clearSerialized)
 	{
-		assert(ranges.Size() < (unsigned short)-1);
+		RakAssert(ranges.Size() < (unsigned short)-1);
 		RakNet::BitStream tempBS;
 		int bitsWritten;
 		unsigned short countWritten;

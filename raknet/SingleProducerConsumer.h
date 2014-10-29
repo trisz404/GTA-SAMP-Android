@@ -1,24 +1,21 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 /// \file
 /// \brief \b [Internal] Passes queued data between threads using a circular buffer with read and write pointers
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
 
 #ifndef __SINGLE_PRODUCER_CONSUMER_H
 #define __SINGLE_PRODUCER_CONSUMER_H
 
-#include <assert.h>
+#include "RakAssert.h"
 
 static const int MINIMUM_LIST_SIZE=8;
 
@@ -33,10 +30,10 @@ namespace DataStructures
 	class RAK_DLL_EXPORT SingleProducerConsumer
 	{
 	public:
-		/// Constructor
+		// Constructor
 		SingleProducerConsumer();
 
-		/// Destructor
+		// Destructor
 		~SingleProducerConsumer();
 
 		/// WriteLock must be immediately followed by WriteUnlock.  These two functions must be called in the same thread.
@@ -104,7 +101,7 @@ namespace DataStructures
 		readPointer->next = new DataPlusPtr;
 		int listSize;
 #ifdef _DEBUG
-		assert(MINIMUM_LIST_SIZE>=3);
+		RakAssert(MINIMUM_LIST_SIZE>=3);
 #endif
 		for (listSize=2; listSize < MINIMUM_LIST_SIZE; listSize++)
 		{
@@ -140,7 +137,7 @@ namespace DataStructures
 		{
 			volatile DataPlusPtr *originalNext=writeAheadPointer->next;
 			writeAheadPointer->next=new DataPlusPtr;
-			assert(writeAheadPointer->next);
+			RakAssert(writeAheadPointer->next);
 			writeAheadPointer->next->next=originalNext;
 		}
 
@@ -163,8 +160,8 @@ namespace DataStructures
 		//	DataPlusPtr *dataContainer = (DataPlusPtr *)structure;
 
 #ifdef _DEBUG
-		assert(writePointer->next!=readPointer);
-		assert(writePointer!=writeAheadPointer);
+		RakAssert(writePointer->next!=readPointer);
+		RakAssert(writePointer!=writeAheadPointer);
 #endif
 
 		writeCount++;
@@ -192,7 +189,7 @@ namespace DataStructures
 		void SingleProducerConsumer<SingleProducerConsumerType>::CancelReadLock( SingleProducerConsumerType* cancelToLocation )
 	{
 #ifdef _DEBUG
-		assert(readPointer!=writePointer);
+		RakAssert(readPointer!=writePointer);
 #endif
 		readAheadPointer=(DataPlusPtr *)cancelToLocation;
 	}
@@ -201,8 +198,8 @@ namespace DataStructures
 		void SingleProducerConsumer<SingleProducerConsumerType>::ReadUnlock( void )
 	{
 #ifdef _DEBUG
-		assert(readAheadPointer!=readPointer); // If hits, then called ReadUnlock before ReadLock
-		assert(readPointer!=writePointer); // If hits, then called ReadUnlock when Read returns 0
+		RakAssert(readAheadPointer!=readPointer); // If hits, then called ReadUnlock before ReadLock
+		RakAssert(readPointer!=writePointer); // If hits, then called ReadUnlock when Read returns 0
 #endif
 		readCount++;
 
@@ -230,7 +227,7 @@ namespace DataStructures
 		{
 			next=writePointer->next;
 #ifdef _DEBUG
-			assert(writePointer!=readPointer);
+			RakAssert(writePointer!=readPointer);
 #endif
 			delete (char*) writePointer;
 			writePointer=next;
@@ -264,83 +261,3 @@ namespace DataStructures
 }
 
 #endif
-
-/*
-#include "SingleProducerConsumer.h"
-#include <process.h>
-#include <assert.h>
-#include <stdio.h>
-#include <windows.h>
-#include <math.h>
-#include <stdlib.h>
-
-#define READ_COUNT_ITERATIONS 10000000
-
-DataStructures::SingleProducerConsumer<unsigned long> spc;
-unsigned long readCount;
-
-unsigned __stdcall ProducerThread( LPVOID arguments )
-{
-unsigned long producerCount;
-unsigned long *writeBlock;
-producerCount=0;
-while (readCount < READ_COUNT_ITERATIONS)
-{
-writeBlock=spc.WriteLock();
-*writeBlock=producerCount;
-spc.WriteUnlock();
-producerCount++;
-if ((producerCount%1000000)==0)
-{
-printf("WriteCount: %i. BufferSize=%i\n", producerCount, spc.Size());
-}
-}
-printf("PRODUCER THREAD ENDED!\n");
-return 0;
-}
-
-unsigned __stdcall ConsumerThread( LPVOID arguments )
-{
-unsigned long *readBlock;
-while (readCount < READ_COUNT_ITERATIONS)
-{
-if ((readBlock=spc.ReadLock())!=0)
-{
-if (*readBlock!=readCount)
-{
-printf("Test failed! Expected %i got %i!\n", readCount, *readBlock);
-readCount = READ_COUNT_ITERATIONS;
-assert(0);
-}
-spc.ReadUnlock();
-readCount++;
-if ((readCount%1000000)==0)
-{
-printf("ReadCount:  %i. BufferSize=%i\n", readCount, spc.Size());
-}
-}
-}
-printf("CONSUMER THREAD ENDED!\n");
-return 0;
-}
-
-void main(void)
-{
-readCount=0;
-unsigned threadId1 = 0;
-unsigned threadId2 = 0;
-HANDLE thread1Handle, thread2Handle;
-unsigned long startTime = timeGetTime();
-
-thread1Handle=(HANDLE)_beginthreadex( NULL, 0, ProducerThread, 0, 0, &threadId1 );
-thread2Handle=(HANDLE)_beginthreadex( NULL, 0, ConsumerThread, 0, 0, &threadId1 );
-
-while (readCount < READ_COUNT_ITERATIONS)
-{
-Sleep(0);
-}
-char str[256];
-printf("Elapsed time = %i milliseconds. Press Enter to continue\n", timeGetTime() - startTime);
-gets(str);
-}
-*/

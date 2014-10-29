@@ -1,19 +1,18 @@
-/// \file
-/// \brief \b [Internal] Ordered Channel Heap .  This is a heap where you add to it on multiple ordered channels, with each channel having a different weight.
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/// \file DS_OrderedChannelHeap.h
+/// \internal
+/// \brief Ordered Channel Heap .  This is a heap where you add to it on multiple ordered channels, with each channel having a different weight.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.rakkarsoft.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __RAKNET_ORDERED_CHANNEL_HEAP_H
 #define __RAKNET_ORDERED_CHANNEL_HEAP_H
@@ -139,7 +138,7 @@ namespace DataStructures
 		}
 		
 #ifdef _DEBUG
-		assert(maxRange!=0.0);
+		RakAssert(maxRange!=0.0);
 #endif
 		rnd=frandomMT() * (maxRange - minRange);
 		if (rnd==0.0)
@@ -156,7 +155,7 @@ namespace DataStructures
 	template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)>
 	heap_data_type OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::Pop(const unsigned startingIndex)
 	{
-		assert(startingIndex < heap.Size());
+		RakAssert(startingIndex < heap.Size());
 
 		QueueAndWeight *queueAndWeight=map.Get(heap[startingIndex].channel);
 		if (startingIndex!=0)

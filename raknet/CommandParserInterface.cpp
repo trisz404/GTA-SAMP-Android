@@ -1,24 +1,33 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 #include "CommandParserInterface.h"
 #include "TransportInterface.h"
 #include <string.h>
-#include <assert.h>
+#include "RakAssert.h"
 #include <stdio.h>
-#ifdef _COMPATIBILITY_1
-#include "Compatibility1Includes.h"
+
+
+#if   defined(WINDOWS_STORE_RT)
 #elif defined(_WIN32)
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
 #include <winsock2.h>
+
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #endif
 
-#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(_stricmp)
-#define _stricmp strcasecmp
-#endif
-
+#include "LinuxStrings.h"
 #ifdef _MSC_VER
 #pragma warning( push )
 #endif
@@ -64,7 +73,7 @@ void CommandParserInterface::ParseConsoleString(char *str, const char delineator
 		{
 			parameterList[parameterListIndex]=str+strIndex;
 			parameterListIndex++;
-			assert(parameterListIndex < parameterListLength);
+			RakAssert(parameterListIndex < parameterListLength);
 			if (parameterListIndex >= parameterListLength)
 				break;
 
@@ -112,23 +121,19 @@ bool CommandParserInterface::GetRegisteredCommand(const char *command, Registere
 		*rc=commandList[index];
 	return objectExists;
 }
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 void CommandParserInterface::OnTransportChange(TransportInterface *transport)
 {
+	(void) transport;
 }
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 void CommandParserInterface::OnNewIncomingConnection(PlayerID playerId, TransportInterface *transport)
 {
+	(void) playerId;
+	(void) transport;
 }
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 void CommandParserInterface::OnConnectionLost(PlayerID playerId, TransportInterface *transport)
 {
+	(void) playerId;
+	(void) transport;
 }
 void CommandParserInterface::ReturnResult(bool res, const char *command,TransportInterface *transport, PlayerID playerId)
 {
@@ -151,21 +156,10 @@ void CommandParserInterface::ReturnResult(char *res, const char *command, Transp
 }
 void CommandParserInterface::ReturnResult(PlayerID res, const char *command, TransportInterface *transport, PlayerID playerId)
 {
-#if !defined(_COMPATIBILITY_1)
 	in_addr in;
 	in.s_addr = playerId.binaryAddress;
 	inet_ntoa( in );
 	transport->Send(playerId, "%s returned %s %i:%i\r\n", command,inet_ntoa( in ),res.binaryAddress, res.port);
-#else
-	transport->Send(playerId, "%s returned %i:%i\r\n", command,res.binaryAddress, res.port);
-#endif
-}
-PlayerID CommandParserInterface::IntegersToPlayerID(int binaryAddress, int port)
-{
-	PlayerID playerId;
-	playerId.binaryAddress=binaryAddress;
-	playerId.port=(unsigned short)port;
-	return playerId;
 }
 
 #ifdef _MSC_VER

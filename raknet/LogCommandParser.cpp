@@ -1,3 +1,13 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 #include "LogCommandParser.h"
 #include "TransportInterface.h"
 #include <memory.h>
@@ -5,11 +15,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#if (defined(__GNUC__)  || defined(__GCCXML__))
-#define _vsnprintf vsnprintf
-#define _stricmp strcasecmp
-#endif
-
+#include "LinuxStrings.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -24,11 +30,10 @@ LogCommandParser::LogCommandParser()
 LogCommandParser::~LogCommandParser()
 {
 }
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 bool LogCommandParser::OnCommand(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, PlayerID playerId, const char *originalString)
 {
+	(void) originalString;
+
 	if (strcmp(command, "Subscribe")==0)
 	{
 		unsigned channelIndex;
@@ -98,7 +103,7 @@ void LogCommandParser::AddChannel(const char *channelName)
 	unsigned channelIndex;
 	channelIndex = GetChannelIndexFromName(channelName);
 	// Each channel can only be added once.
-	assert(channelIndex==(unsigned)-1);
+	RakAssert(channelIndex==(unsigned)-1);
 
 	unsigned i;
 	for (i=0; i < 32; i++)
@@ -112,7 +117,7 @@ void LogCommandParser::AddChannel(const char *channelName)
 	}
 
 	// No more available channels - max 32 with this implementation where I save subscribed channels with bit operations
-	assert(0);
+	RakAssert(0);
 }
 void LogCommandParser::WriteLog(const char *channelName, const char *format, ...)
 {
@@ -177,17 +182,14 @@ void LogCommandParser::PrintChannels(PlayerID playerId, TransportInterface *tran
 	if (anyChannels==false)
 		transport->Send(playerId, "None.\r\n");
 }
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 void LogCommandParser::OnNewIncomingConnection(PlayerID playerId, TransportInterface *transport)
 {
+	(void) playerId;
+	(void) transport;
 }
-#ifdef _MSC_VER
-#pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
-#endif
 void LogCommandParser::OnConnectionLost(PlayerID playerId, TransportInterface *transport)
 {
+	(void) transport;
 	Unsubscribe(playerId, 0);
 }
 unsigned LogCommandParser::Unsubscribe(PlayerID playerId, const char *channelName)

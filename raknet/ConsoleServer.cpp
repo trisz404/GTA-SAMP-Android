@@ -1,3 +1,12 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
 #include "ConsoleServer.h"
 #include "TransportInterface.h"
 #include "CommandParserInterface.h"
@@ -7,10 +16,8 @@
 #define COMMAND_DELINATOR ' '
 #define COMMAND_DELINATOR_TOGGLE '"'
 
-#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(_stricmp)
-#define _stricmp strcasecmp
-#endif
-
+#include "LinuxStrings.h"
+#include "RakAssert.h"
 ConsoleServer::ConsoleServer()
 {
 	transport=0;
@@ -55,7 +62,7 @@ void ConsoleServer::AddCommandParser(CommandParserInterface *commandParserInterf
         if (_stricmp(commandParserList[i]->GetName(), commandParserInterface->GetName())==0)
 		{
 			// Naming conflict between two command parsers
-			assert(0);
+			RakAssert(0);
 			return;
 		}
 	}
